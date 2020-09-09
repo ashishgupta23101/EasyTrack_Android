@@ -422,6 +422,29 @@ module.exports = webpackAsyncContext;
 
 /***/ }),
 
+/***/ "./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/node_modules/@angular/core/fesm5 lazy recursive":
+/*!*****************************************************************************************************************************!*\
+  !*** ./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/node_modules/@angular/core/fesm5 lazy namespace object ***!
+  \*****************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function webpackEmptyAsyncContext(req) {
+	// Here Promise.resolve().then() is used instead of new Promise() to prevent
+	// uncaught exception popping up in devtools
+	return Promise.resolve().then(function() {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	});
+}
+webpackEmptyAsyncContext.keys = function() { return []; };
+webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
+module.exports = webpackEmptyAsyncContext;
+webpackEmptyAsyncContext.id = "./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/node_modules/@angular/core/fesm5 lazy recursive";
+
+/***/ }),
+
 /***/ "./node_modules/moment/locale sync recursive ^\\.\\/.*$":
 /*!**************************************************!*\
   !*** ./node_modules/moment/locale sync ^\.\/.*$ ***!
@@ -894,7 +917,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcm, network, iab) {
+    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab) {
         this.platform = platform;
         this.navCtrl = navCtrl;
         this.splashScreen = splashScreen;
@@ -902,7 +925,7 @@ var AppComponent = /** @class */ (function () {
         this.loadingController = loadingController;
         this.storage = storage;
         this.trackService = trackService;
-        this.fcm = fcm;
+        this.fcmService = fcmService;
         this.network = network;
         this.iab = iab;
         this.appPages = [
@@ -941,47 +964,6 @@ var AppComponent = /** @class */ (function () {
         this.initializeApp();
     }
     AppComponent.prototype.initializeApp = function () {
-        // if (this.platform.is('android')) {
-        //   this.initializeAndroidApp();
-        // }
-        // else {
-        this.initializeOtherApps();
-        // }
-        // this.platform.ready().then(() => {
-        //   this.platform.resume.subscribe(async () => {
-        //     let trackNo = localStorage.getItem("intent");
-        //     if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-        //      // this.navCtrl.navigateForward('/home');
-        //     }
-        //   });
-        //   this.platform.pause.subscribe(async () => {
-        //     this.navCtrl.navigateForward('/home');
-        //   });
-        //   if (this.platform.is('cordova')) {
-        //   this.network.onDisconnect().subscribe(()=>
-        //   {
-        //     setTimeout(()=>
-        //     {
-        //       this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-        //     }, 2000);
-        //   });
-        //   this.network.onConnect().subscribe(()=>
-        //   {
-        //     setTimeout(()=>
-        //     {
-        //       this.loadingController.presentToast('dark', 'Internet is Now Connected');
-        //     }, 2000);
-        //   });
-        //   this.statusBar.backgroundColorByHexString('#7606a7');
-        //   this.fcm.notificationSetup();
-        //   this.trackService.GenerateDeviceID();
-        // }else{
-        //   localStorage.setItem("deviceID",, 'browser');
-        // }
-        // this.trackService.saveToken();
-        // });
-    };
-    AppComponent.prototype.initializeOtherApps = function () {
         var _this = this;
         this.platform.ready().then(function () {
             _this.platform.resume.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
@@ -1008,55 +990,18 @@ var AppComponent = /** @class */ (function () {
                 });
                 _this.network.onConnect().subscribe(function () {
                     setTimeout(function () {
-                        _this.loadingController.presentToast('dark', 'Internet is Now Connected');
+                        // this.loadingController.presentToast('dark', 'Internet is Now Connected');
                     }, 2000);
                 });
                 _this.statusBar.backgroundColorByHexString('#7606a7');
                 _this.trackService.GenerateDeviceID();
-                _this.fcm.notificationSetup();
+                _this.fcmService.notificationSetup();
             }
             else {
                 localStorage.setItem("deviceID", 'browser');
             }
             _this.trackService.saveToken();
         });
-    };
-    AppComponent.prototype.initializeAndroidApp = function () {
-        var _this = this;
-        this.platform.resume.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-            var trackNo;
-            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                trackNo = localStorage.getItem("intent");
-                if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-                    // this.navCtrl.navigateForward('/home');
-                }
-                return [2 /*return*/];
-            });
-        }); });
-        this.platform.pause.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                return [2 /*return*/];
-            });
-        }); });
-        if (this.platform.is('cordova')) {
-            this.network.onDisconnect().subscribe(function () {
-                setTimeout(function () {
-                    _this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-                }, 2000);
-            });
-            this.network.onConnect().subscribe(function () {
-                setTimeout(function () {
-                    _this.loadingController.presentToast('dark', 'Internet is Now Connected');
-                }, 2000);
-            });
-            this.statusBar.backgroundColorByHexString('#7606a7');
-            this.fcm.notificationSetup();
-            this.trackService.GenerateDeviceID();
-        }
-        else {
-            localStorage.setItem("deviceID", 'browser');
-        }
-        this.trackService.saveToken();
     };
     AppComponent.prototype.openUrl = function () {
         var _this = this;
@@ -1127,7 +1072,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_services_fcm_service__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! src/services/fcm.service */ "./src/services/fcm.service.ts");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @ionic-native/network/ngx */ "./node_modules/@ionic-native/network/ngx/index.js");
 /* harmony import */ var _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @ionic-native/in-app-browser/ngx */ "./node_modules/@ionic-native/in-app-browser/ngx/index.js");
-/* harmony import */ var _ionic_native_fcm_ngx__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @ionic-native/fcm/ngx */ "./node_modules/@ionic-native/fcm/ngx/index.js");
+/* harmony import */ var cordova_plugin_fcm_with_dependecy_updated_ionic_ngx__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! cordova-plugin-fcm-with-dependecy-updated/ionic/ngx */ "./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/ngx/FCM.js");
 /* harmony import */ var _ionic_native_web_intent_ngx__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @ionic-native/web-intent/ngx */ "./node_modules/@ionic-native/web-intent/ngx/index.js");
 
 
@@ -1157,6 +1102,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import { FCM } from '@ionic-native/fcm/ngx';
 
 
 var config = {
@@ -1204,7 +1150,7 @@ var AppModule = /** @class */ (function () {
                 _ionic_native_splash_screen_ngx__WEBPACK_IMPORTED_MODULE_5__["SplashScreen"],
                 _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_17__["NativeGeocoder"],
                 _ionic_native_firebase_x_ngx__WEBPACK_IMPORTED_MODULE_23__["FirebaseX"],
-                _ionic_native_fcm_ngx__WEBPACK_IMPORTED_MODULE_27__["FCM"],
+                cordova_plugin_fcm_with_dependecy_updated_ionic_ngx__WEBPACK_IMPORTED_MODULE_27__["FCM"],
                 //ZBar,
                 src_services_fcm_service__WEBPACK_IMPORTED_MODULE_24__["FcmService"],
                 _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_25__["Network"],
@@ -1239,7 +1185,7 @@ module.exports = "\n<ion-toolbar> \n\n  <ion-tabs>\n   <ion-tab-bar>\n      <ion
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ion-tab-button {\n  background: #f2e4ff; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9mb290ZXJ0YWIvRDpcXENvZGVcXGlPUyBBcHBcXFZhaWJoYXZcXEFuZHJvaWRcXENvZGUvc3JjXFxhcHBcXGNvbXBvbmVudHNcXGZvb3RlcnRhYlxcZm9vdGVydGFiLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNBO0VBQWUsbUJBQW1CLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL2Zvb3RlcnRhYi9mb290ZXJ0YWIuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIvL2lvbi10YWItYnV0dG9ue2JhY2tncm91bmQ6ICNmMmU0ZmZ9XG5pb24tdGFiLWJ1dHRvbntiYWNrZ3JvdW5kOiAjZjJlNGZmfSJdfQ== */"
+module.exports = "ion-tab-button {\n  background: #f2e4ff; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9mb290ZXJ0YWIvRDpcXENvZGVcXEVhc3lUcmFja0FuZHJvaWRcXElvbmljXFxDb2RlXFxFYXN5VHJhY2tfQW5kcm9pZC9zcmNcXGFwcFxcY29tcG9uZW50c1xcZm9vdGVydGFiXFxmb290ZXJ0YWIuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQ0E7RUFBZSxtQkFBbUIsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvZm9vdGVydGFiL2Zvb3RlcnRhYi5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi8vaW9uLXRhYi1idXR0b257YmFja2dyb3VuZDogI2YyZTRmZn1cbmlvbi10YWItYnV0dG9ue2JhY2tncm91bmQ6ICNmMmU0ZmZ9Il19 */"
 
 /***/ }),
 
@@ -1342,7 +1288,7 @@ module.exports = "<!-- <ion-fab vertical=\"bottom\" horizontal=\"end\">\n    <io
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ion-fab {\n  position: fixed !important;\n  bottom: 20px !important;\n  right: 15px !important; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9oZWxwLWZhYi9EOlxcQ29kZVxcaU9TIEFwcFxcVmFpYmhhdlxcQW5kcm9pZFxcQ29kZS9zcmNcXGFwcFxcY29tcG9uZW50c1xcaGVscC1mYWJcXGhlbHAtZmFiLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksMEJBQTBCO0VBQzFCLHVCQUF1QjtFQUN2QixzQkFBc0IsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvaGVscC1mYWIvaGVscC1mYWIuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJpb24tZmFiIHsgICAgXG4gICAgcG9zaXRpb246IGZpeGVkICFpbXBvcnRhbnQ7XG4gICAgYm90dG9tOiAyMHB4ICFpbXBvcnRhbnQ7XG4gICAgcmlnaHQ6IDE1cHggIWltcG9ydGFudDtcbn0gIl19 */"
+module.exports = "ion-fab {\n  position: fixed !important;\n  bottom: 20px !important;\n  right: 15px !important; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9oZWxwLWZhYi9EOlxcQ29kZVxcRWFzeVRyYWNrQW5kcm9pZFxcSW9uaWNcXENvZGVcXEVhc3lUcmFja19BbmRyb2lkL3NyY1xcYXBwXFxjb21wb25lbnRzXFxoZWxwLWZhYlxcaGVscC1mYWIuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSwwQkFBMEI7RUFDMUIsdUJBQXVCO0VBQ3ZCLHNCQUFzQixFQUFBIiwiZmlsZSI6InNyYy9hcHAvY29tcG9uZW50cy9oZWxwLWZhYi9oZWxwLWZhYi5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi1mYWIgeyAgICBcbiAgICBwb3NpdGlvbjogZml4ZWQgIWltcG9ydGFudDtcbiAgICBib3R0b206IDIwcHggIWltcG9ydGFudDtcbiAgICByaWdodDogMTVweCAhaW1wb3J0YW50O1xufSAiXX0= */"
 
 /***/ }),
 
@@ -1431,7 +1377,7 @@ module.exports = "<ion-toolbar >\n  <ion-slides>\n    <ion-slide><a href=\"https
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ion-slide {\n  width: 40px !important; }\n\nion-tab-button {\n  background: #f2e4ff; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9zb2NpYWwtbWVkaWEtbGlua3MvRDpcXENvZGVcXGlPUyBBcHBcXFZhaWJoYXZcXEFuZHJvaWRcXENvZGUvc3JjXFxhcHBcXGNvbXBvbmVudHNcXHNvY2lhbC1tZWRpYS1saW5rc1xcc29jaWFsLW1lZGlhLWxpbmtzLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQVUsc0JBQXNCLEVBQUE7O0FBQ2hDO0VBQWUsbUJBQW1CLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL3NvY2lhbC1tZWRpYS1saW5rcy9zb2NpYWwtbWVkaWEtbGlua3MuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJpb24tc2xpZGV7d2lkdGg6IDQwcHggIWltcG9ydGFudDt9XG5pb24tdGFiLWJ1dHRvbntiYWNrZ3JvdW5kOiAjZjJlNGZmfSJdfQ== */"
+module.exports = "ion-slide {\n  width: 40px !important; }\n\nion-tab-button {\n  background: #f2e4ff; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9zb2NpYWwtbWVkaWEtbGlua3MvRDpcXENvZGVcXEVhc3lUcmFja0FuZHJvaWRcXElvbmljXFxDb2RlXFxFYXN5VHJhY2tfQW5kcm9pZC9zcmNcXGFwcFxcY29tcG9uZW50c1xcc29jaWFsLW1lZGlhLWxpbmtzXFxzb2NpYWwtbWVkaWEtbGlua3MuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFBVSxzQkFBc0IsRUFBQTs7QUFDaEM7RUFBZSxtQkFBbUIsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvc29jaWFsLW1lZGlhLWxpbmtzL3NvY2lhbC1tZWRpYS1saW5rcy5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi1zbGlkZXt3aWR0aDogNDBweCAhaW1wb3J0YW50O31cbmlvbi10YWItYnV0dG9ue2JhY2tncm91bmQ6ICNmMmU0ZmZ9Il19 */"
 
 /***/ }),
 
@@ -1486,7 +1432,7 @@ module.exports = "<ion-icon title=\"Share\" name=\"share\" ></ion-icon>\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "button.action-facebook {\n  background-color: #3B5998 !important;\n  color: white !important; }\n\nbutton.action-twitter {\n  background-color: #1DA1F2 !important;\n  color: white !important; }\n\nbutton.action-instagram {\n  color: white !important;\n  background: #f09433;\n  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;\n  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 ) !important; }\n\nbutton.action-whatsup {\n  background-color: #128C7E !important;\n  color: white !important; }\n\nbutton.action-regular {\n  background-color: darkmagenta !important;\n  color: white !important; }\n\n.action-sheet-group {\n  padding: 0 !important; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9zb2NpYWwtc2hhcmluZy9EOlxcQ29kZVxcaU9TIEFwcFxcVmFpYmhhdlxcQW5kcm9pZFxcQ29kZS9zcmNcXGFwcFxcY29tcG9uZW50c1xcc29jaWFsLXNoYXJpbmdcXHNvY2lhbC1zaGFyaW5nLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksb0NBQW9DO0VBQ3BDLHVCQUF1QixFQUFBOztBQUczQjtFQUNJLG9DQUFvQztFQUNwQyx1QkFBc0IsRUFBQTs7QUFHMUI7RUFDSSx1QkFBc0I7RUFDdEIsbUJBQW1CO0VBR25CLDhHQUEwRztFQUMxRyw4SEFBOEgsRUFBQTs7QUFHbEk7RUFDSSxvQ0FBb0M7RUFDcEMsdUJBQXNCLEVBQUE7O0FBRzFCO0VBQ0ksd0NBQXdDO0VBQ3hDLHVCQUFzQixFQUFBOztBQUcxQjtFQUNJLHFCQUFxQixFQUFBIiwiZmlsZSI6InNyYy9hcHAvY29tcG9uZW50cy9zb2NpYWwtc2hhcmluZy9zb2NpYWwtc2hhcmluZy5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImJ1dHRvbi5hY3Rpb24tZmFjZWJvb2t7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzNCNTk5OCAhaW1wb3J0YW50O1xuICAgIGNvbG9yOiB3aGl0ZSAhaW1wb3J0YW50O1xufVxuXG5idXR0b24uYWN0aW9uLXR3aXR0ZXJ7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzFEQTFGMiAhaW1wb3J0YW50O1xuICAgIGNvbG9yOiB3aGl0ZSFpbXBvcnRhbnQ7XG59XG5cbmJ1dHRvbi5hY3Rpb24taW5zdGFncmFte1xuICAgIGNvbG9yOiB3aGl0ZSFpbXBvcnRhbnQ7XG4gICAgYmFja2dyb3VuZDogI2YwOTQzMztcbiAgICBiYWNrZ3JvdW5kOiAtbW96LWxpbmVhci1ncmFkaWVudCg0NWRlZywgI2YwOTQzMyAwJSwgI2U2NjgzYyAyNSUsICNkYzI3NDMgNTAlLCAjY2MyMzY2IDc1JSwgI2JjMTg4OCAxMDAlKSAhaW1wb3J0YW50O1xuICAgIGJhY2tncm91bmQ6IC13ZWJraXQtbGluZWFyLWdyYWRpZW50KDQ1ZGVnLCAjZjA5NDMzIDAlLCNlNjY4M2MgMjUlLCNkYzI3NDMgNTAlLCNjYzIzNjYgNzUlLCNiYzE4ODggMTAwJSkgIWltcG9ydGFudDtcbiAgICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoNDVkZWcsICNmMDk0MzMgMCUsI2U2NjgzYyAyNSUsI2RjMjc0MyA1MCUsI2NjMjM2NiA3NSUsI2JjMTg4OCAxMDAlKSAhaW1wb3J0YW50O1xuICAgIGZpbHRlcjogcHJvZ2lkOkRYSW1hZ2VUcmFuc2Zvcm0uTWljcm9zb2Z0LmdyYWRpZW50KCBzdGFydENvbG9yc3RyPScjZjA5NDMzJywgZW5kQ29sb3JzdHI9JyNiYzE4ODgnLEdyYWRpZW50VHlwZT0xICkgIWltcG9ydGFudDtcbn1cblxuYnV0dG9uLmFjdGlvbi13aGF0c3Vwe1xuICAgIGJhY2tncm91bmQtY29sb3I6ICMxMjhDN0UgIWltcG9ydGFudDtcbiAgICBjb2xvcjogd2hpdGUhaW1wb3J0YW50O1xufVxuXG5idXR0b24uYWN0aW9uLXJlZ3VsYXJ7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogZGFya21hZ2VudGEgIWltcG9ydGFudDtcbiAgICBjb2xvcjogd2hpdGUhaW1wb3J0YW50O1xufVxuXG4uYWN0aW9uLXNoZWV0LWdyb3Vwe1xuICAgIHBhZGRpbmc6IDAgIWltcG9ydGFudDtcbn0iXX0= */"
+module.exports = "button.action-facebook {\n  background-color: #3B5998 !important;\n  color: white !important; }\n\nbutton.action-twitter {\n  background-color: #1DA1F2 !important;\n  color: white !important; }\n\nbutton.action-instagram {\n  color: white !important;\n  background: #f09433;\n  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;\n  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 ) !important; }\n\nbutton.action-whatsup {\n  background-color: #128C7E !important;\n  color: white !important; }\n\nbutton.action-regular {\n  background-color: darkmagenta !important;\n  color: white !important; }\n\n.action-sheet-group {\n  padding: 0 !important; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9zb2NpYWwtc2hhcmluZy9EOlxcQ29kZVxcRWFzeVRyYWNrQW5kcm9pZFxcSW9uaWNcXENvZGVcXEVhc3lUcmFja19BbmRyb2lkL3NyY1xcYXBwXFxjb21wb25lbnRzXFxzb2NpYWwtc2hhcmluZ1xcc29jaWFsLXNoYXJpbmcuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxvQ0FBb0M7RUFDcEMsdUJBQXVCLEVBQUE7O0FBRzNCO0VBQ0ksb0NBQW9DO0VBQ3BDLHVCQUFzQixFQUFBOztBQUcxQjtFQUNJLHVCQUFzQjtFQUN0QixtQkFBbUI7RUFHbkIsOEdBQTBHO0VBQzFHLDhIQUE4SCxFQUFBOztBQUdsSTtFQUNJLG9DQUFvQztFQUNwQyx1QkFBc0IsRUFBQTs7QUFHMUI7RUFDSSx3Q0FBd0M7RUFDeEMsdUJBQXNCLEVBQUE7O0FBRzFCO0VBQ0kscUJBQXFCLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL3NvY2lhbC1zaGFyaW5nL3NvY2lhbC1zaGFyaW5nLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiYnV0dG9uLmFjdGlvbi1mYWNlYm9va3tcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjM0I1OTk4ICFpbXBvcnRhbnQ7XG4gICAgY29sb3I6IHdoaXRlICFpbXBvcnRhbnQ7XG59XG5cbmJ1dHRvbi5hY3Rpb24tdHdpdHRlcntcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMURBMUYyICFpbXBvcnRhbnQ7XG4gICAgY29sb3I6IHdoaXRlIWltcG9ydGFudDtcbn1cblxuYnV0dG9uLmFjdGlvbi1pbnN0YWdyYW17XG4gICAgY29sb3I6IHdoaXRlIWltcG9ydGFudDtcbiAgICBiYWNrZ3JvdW5kOiAjZjA5NDMzO1xuICAgIGJhY2tncm91bmQ6IC1tb3otbGluZWFyLWdyYWRpZW50KDQ1ZGVnLCAjZjA5NDMzIDAlLCAjZTY2ODNjIDI1JSwgI2RjMjc0MyA1MCUsICNjYzIzNjYgNzUlLCAjYmMxODg4IDEwMCUpICFpbXBvcnRhbnQ7XG4gICAgYmFja2dyb3VuZDogLXdlYmtpdC1saW5lYXItZ3JhZGllbnQoNDVkZWcsICNmMDk0MzMgMCUsI2U2NjgzYyAyNSUsI2RjMjc0MyA1MCUsI2NjMjM2NiA3NSUsI2JjMTg4OCAxMDAlKSAhaW1wb3J0YW50O1xuICAgIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCg0NWRlZywgI2YwOTQzMyAwJSwjZTY2ODNjIDI1JSwjZGMyNzQzIDUwJSwjY2MyMzY2IDc1JSwjYmMxODg4IDEwMCUpICFpbXBvcnRhbnQ7XG4gICAgZmlsdGVyOiBwcm9naWQ6RFhJbWFnZVRyYW5zZm9ybS5NaWNyb3NvZnQuZ3JhZGllbnQoIHN0YXJ0Q29sb3JzdHI9JyNmMDk0MzMnLCBlbmRDb2xvcnN0cj0nI2JjMTg4OCcsR3JhZGllbnRUeXBlPTEgKSAhaW1wb3J0YW50O1xufVxuXG5idXR0b24uYWN0aW9uLXdoYXRzdXB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzEyOEM3RSAhaW1wb3J0YW50O1xuICAgIGNvbG9yOiB3aGl0ZSFpbXBvcnRhbnQ7XG59XG5cbmJ1dHRvbi5hY3Rpb24tcmVndWxhcntcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBkYXJrbWFnZW50YSAhaW1wb3J0YW50O1xuICAgIGNvbG9yOiB3aGl0ZSFpbXBvcnRhbnQ7XG59XG5cbi5hY3Rpb24tc2hlZXQtZ3JvdXB7XG4gICAgcGFkZGluZzogMCAhaW1wb3J0YW50O1xufSJdfQ== */"
 
 /***/ }),
 
@@ -1742,7 +1688,7 @@ module.exports = "<ion-list>\n  <ion-item (click)='archive()'>\n    <ion-icon co
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ion-item:hover {\n  cursor: hand; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcGFnZXMvcG9wb3Zlci1kZXRhaWwvRDpcXENvZGVcXGlPUyBBcHBcXFZhaWJoYXZcXEFuZHJvaWRcXENvZGUvc3JjXFxhcHBcXHBhZ2VzXFxwb3BvdmVyLWRldGFpbFxccG9wb3Zlci1kZXRhaWwucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQWdCLFlBQVksRUFBQSIsImZpbGUiOiJzcmMvYXBwL3BhZ2VzL3BvcG92ZXItZGV0YWlsL3BvcG92ZXItZGV0YWlsLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi1pdGVtOmhvdmVyIHtjdXJzb3I6IGhhbmQ7fSJdfQ== */"
+module.exports = "ion-item:hover {\n  cursor: hand; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcGFnZXMvcG9wb3Zlci1kZXRhaWwvRDpcXENvZGVcXEVhc3lUcmFja0FuZHJvaWRcXElvbmljXFxDb2RlXFxFYXN5VHJhY2tfQW5kcm9pZC9zcmNcXGFwcFxccGFnZXNcXHBvcG92ZXItZGV0YWlsXFxwb3BvdmVyLWRldGFpbC5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFBZ0IsWUFBWSxFQUFBIiwiZmlsZSI6InNyYy9hcHAvcGFnZXMvcG9wb3Zlci1kZXRhaWwvcG9wb3Zlci1kZXRhaWwucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW9uLWl0ZW06aG92ZXIge2N1cnNvcjogaGFuZDt9Il19 */"
 
 /***/ }),
 
@@ -2757,6 +2703,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/QueryParams */ "./src/app/models/QueryParams.ts");
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/device/ngx */ "./node_modules/@ionic-native/device/ngx/index.js");
 /* harmony import */ var src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/models/active-packages */ "./src/app/models/active-packages.ts");
+/* harmony import */ var src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/providers/loader.service */ "./src/app/providers/loader.service.ts");
+/* harmony import */ var cordova_plugin_fcm_with_dependecy_updated_ionic_ngx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! cordova-plugin-fcm-with-dependecy-updated/ionic/ngx */ "./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/ngx/FCM.js");
 
 //import { FCM } from '@ionic-native/fcm/ngx';
 
@@ -2769,16 +2717,21 @@ __webpack_require__.r(__webpack_exports__);
 // import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 
 
+
+// import { FCM } from '@ionic-native/fcm/ngx';
+
 var FcmService = /** @class */ (function () {
     function FcmService(firebase, storage, trackService, afs, device, 
     // private fcm: FCM,
-    platform) {
+    platform, LoadingController, fcm) {
         this.firebase = firebase;
         this.storage = storage;
         this.trackService = trackService;
         this.afs = afs;
         this.device = device;
         this.platform = platform;
+        this.LoadingController = LoadingController;
+        this.fcm = fcm;
     }
     FcmService.prototype.getToken = function () {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
@@ -2787,21 +2740,31 @@ var FcmService = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         debugger;
-                        if (!this.platform.is('android')) return [3 /*break*/, 2];
+                        if (this.platform.is('android')) {
+                            // token = await this.firebase.getToken();
+                            this.fcm.getToken().then(function (tokenDevice) {
+                                token = tokenDevice;
+                            });
+                            // .catch(err =>
+                            //   this.LoadingController.presentToast('error', 'ErrorInToken ' + err)
+                            //   );
+                            // token = this.fcm.getToken().catch(err =>
+                            //   this.LoadingController.presentToast('error', 'ErrorInToken ' + err)
+                            //   );
+                            //   this.LoadingController.presentToast('error', 'Token ' + stringify(token));
+                            // this.fcm.getToken().then(devToken => {
+                            //   token = devToken;
+                            // });
+                        }
+                        if (!this.platform.is('ios')) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.firebase.getToken()];
                     case 1:
                         token = _a.sent();
-                        _a.label = 2;
-                    case 2:
-                        if (!this.platform.is('ios')) return [3 /*break*/, 5];
-                        return [4 /*yield*/, this.firebase.getToken()];
-                    case 3:
-                        token = _a.sent();
                         return [4 /*yield*/, this.firebase.grantPermission()];
-                    case 4:
+                    case 2:
                         _a.sent();
-                        _a.label = 5;
-                    case 5:
+                        _a.label = 3;
+                    case 3:
                         if (!token)
                             return [2 /*return*/];
                         localStorage.setItem("deviceToken", token);
@@ -2810,6 +2773,22 @@ var FcmService = /** @class */ (function () {
                 }
             });
         });
+    };
+    FcmService.prototype.notificationSetup = function () {
+        if (this.platform.is('cordova')) {
+            this.getToken();
+            this.refreshToken().subscribe(function (token) {
+                localStorage.setItem("deviceToken", token);
+            });
+        }
+        this.subscribetoMessage(this.device.uuid);
+        if (this.platform.is('android')) {
+            this.onNotificationsAndroid();
+        }
+        else {
+            this.onNotificationsOthers();
+        }
+        this.unsubscribetoMessage(this.device.uuid);
     };
     FcmService.prototype.saveToken = function (token) {
         if (!token)
@@ -2825,34 +2804,34 @@ var FcmService = /** @class */ (function () {
         return devicesRef.doc(token).set(data);
     };
     FcmService.prototype.subscribetoMessage = function (topic) {
-        this.firebase.subscribe(topic);
+        if (this.platform.is('ios')) {
+            return this.firebase.subscribe(topic);
+        }
+        else
+            (this.platform.is('android'));
+        {
+            return this.fcm.subscribeToTopic(topic);
+        }
     };
     FcmService.prototype.unsubscribetoMessage = function (topic) {
-        this.firebase.unsubscribe(topic);
+        if (this.platform.is('ios')) {
+            this.firebase.unsubscribe(topic);
+        }
+        else if (this.platform.is('android')) {
+            this.fcm.unsubscribeFromTopic(topic);
+        }
     };
     FcmService.prototype.refreshToken = function () {
+        // if (this.platform.is('android')) {
+        //   return this.fcm.onTokenRefresh();
+        // }
+        // else {
         return this.firebase.onTokenRefresh();
+        // }
     };
-    FcmService.prototype.onNotifications = function () {
-        return this.firebase.onMessageReceived();
-    };
-    FcmService.prototype.notificationSetup = function () {
+    FcmService.prototype.onNotificationsOthers = function () {
         var _this = this;
-        if (this.platform.is('cordova')) {
-            this.getToken();
-            this.refreshToken().subscribe(function (token) {
-                localStorage.setItem("deviceToken", token);
-            });
-        }
-        this.subscribetoMessage(this.device.uuid);
-        this.onNotifications().subscribe(function (msg) {
-            // if (this.platform.is('ios')) {
-            _this.storage.get('apiData').then(function (aData) {
-                if (aData !== null && aData !== undefined) {
-                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
-                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
-                }
-            });
+        this.firebase.onMessageReceived().subscribe(function (msg) {
             var notification;
             notification = msg.aps.alert.body;
             var message = notification.split(',');
@@ -2861,6 +2840,13 @@ var FcmService = /** @class */ (function () {
             var trackingNo = trackingNoMessage[1].trim();
             var carrier = carrierMessage[1].trim();
             //let recordKey = trackingNo + '-' + carrier;
+            // if (this.platform.is('ios')) {
+            _this.storage.get('apiData').then(function (aData) {
+                if (aData !== null && aData !== undefined) {
+                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
+                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
+                }
+            });
             try {
                 _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
                 _this.queryParam.TrackingNo = trackingNo;
@@ -2873,9 +2859,45 @@ var FcmService = /** @class */ (function () {
                 _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
                 // this.loadingController.presentToast('Error', JSON.stringify(Exception));
             }
-            // }
         });
-        this.unsubscribetoMessage(this.device.uuid);
+    };
+    FcmService.prototype.onNotificationsAndroid = function () {
+        var _this = this;
+        this.fcm.onNotification().subscribe(function (msg) {
+            var trackingNo = _this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
+            var carrier = _this.getValueFromNotification(JSON.stringify(msg), "Carrier");
+            _this.storage.get('apiData').then(function (aData) {
+                if (aData !== null && aData !== undefined) {
+                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
+                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
+                }
+            });
+            try {
+                _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
+                _this.queryParam.TrackingNo = trackingNo;
+                _this.queryParam.Carrier = carrier;
+                _this.queryParam.Description = '';
+                _this.queryParam.Residential = 'false';
+                _this.trackService.getTrackingDetails(_this.queryParam);
+            }
+            catch (Exception) {
+                _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
+                // this.loadingController.presentToast('Error', JSON.stringify(Exception));
+            }
+        });
+    };
+    FcmService.prototype.getValueFromNotification = function (notification, field) {
+        var value;
+        var startIndex;
+        var endIndex;
+        if (notification.includes(field)) {
+            startIndex = notification.indexOf(field);
+            startIndex = notification.indexOf(':', startIndex);
+            startIndex = notification.indexOf('"', startIndex);
+            endIndex = notification.indexOf('"', startIndex + 1);
+            value = notification.substring(startIndex + 1, endIndex);
+        }
+        return value;
     };
     FcmService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])(),
@@ -2884,7 +2906,9 @@ var FcmService = /** @class */ (function () {
             _tracking_service__WEBPACK_IMPORTED_MODULE_6__["TrackingService"],
             angularfire2_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"],
             _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_8__["Device"],
-            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"]])
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"],
+            src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_10__["LoaderService"],
+            cordova_plugin_fcm_with_dependecy_updated_ionic_ngx__WEBPACK_IMPORTED_MODULE_11__["FCM"]])
     ], FcmService);
     return FcmService;
 }());
@@ -3143,12 +3167,12 @@ var TrackingService = /** @class */ (function () {
     TrackingService.prototype.saveToken = function () {
         var _this = this;
         var devToken = localStorage.getItem("deviceToken");
-        if (this.paltform.is('android') || (devToken !== 'null' && devToken !== null && devToken !== undefined && devToken !== '')) {
+        if (devToken !== 'null' && devToken !== null && devToken !== undefined && devToken !== '') {
             // alert('DeviceToken = ' + devToken);
             var devID = localStorage.getItem("deviceID");
             var tempDeviceType = 'IOS';
             if (this.paltform.is('android')) {
-                var tempDeviceType = 'ANDROID';
+                var tempDeviceType = 'IONANDROID';
             }
             if (devID !== 'null' && devID !== null && devID !== undefined && devID !== '') {
                 //  alert('DeviceID' + devID);
@@ -3281,7 +3305,7 @@ var TrackingService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\Code\iOS App\Vaibhav\Android\Code\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! D:\Code\EasyTrackAndroid\Ionic\Code\EasyTrack_Android\src\main.ts */"./src/main.ts");
 
 
 /***/ })

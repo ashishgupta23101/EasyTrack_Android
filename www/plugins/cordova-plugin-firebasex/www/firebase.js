@@ -202,6 +202,10 @@ exports.isCrashlyticsCollectionEnabled = function (success, error) {
     exec(success, error, "FirebasePlugin", "isCrashlyticsCollectionEnabled", []);
 };
 
+exports.isCrashlyticsCollectionCurrentlyEnabled = function (success, error) {
+    exec(success, error, "FirebasePlugin", "isCrashlyticsCollectionCurrentlyEnabled", []);
+};
+
 exports.logMessage = function (message, success, error) {
     exec(success, error, "FirebasePlugin", "logMessage", [message]);
 };
@@ -247,14 +251,6 @@ exports.signInUserWithEmailAndPassword = function (email, password, success, err
     exec(success, error, "FirebasePlugin", "signInUserWithEmailAndPassword", [email, password]);
 };
 
-exports.signInUserWithCustomToken = function (customToken, success, error) {
-  exec(success, error, "FirebasePlugin", "signInUserWithCustomToken", [customToken]);
-};
-
-exports.signInUserAnonymously = function (success, error) {
-  exec(success, error, "FirebasePlugin", "signInUserAnonymously");
-};
-
 exports.authenticateUserWithGoogle = function (clientId, success, error) {
     exec(success, error, "FirebasePlugin", "authenticateUserWithGoogle", [clientId]);
 };
@@ -292,13 +288,6 @@ exports.getCurrentUser = function (success, error) {
         user.emailIsVerified = ensureBoolean(user.emailIsVerified);
         success(user);
     }, error, "FirebasePlugin", "getCurrentUser", []);
-};
-
-exports.reloadCurrentUser = function (success, error) {
-    exec(function(user){
-        user.emailIsVerified = ensureBoolean(user.emailIsVerified);
-        success(user);
-    }, error, "FirebasePlugin", "reloadCurrentUser", []);
 };
 
 exports.updateUserProfile = function (profile, success, error) {
@@ -365,13 +354,6 @@ exports.deleteDocumentFromFirestoreCollection = function (documentId, collection
     exec(success, error, "FirebasePlugin", "deleteDocumentFromFirestoreCollection", [documentId.toString(), collection]);
 };
 
-exports.documentExistsInFirestoreCollection = function (documentId, collection, success, error) {
-    if(typeof documentId !== 'string' && typeof documentId !== 'number') return error("'documentId' must be a string or number specifying the Firestore document identifier");
-    if(typeof collection !== 'string') return error("'collection' must be a string specifying the Firestore collection name");
-
-    exec(ensureBooleanFn(success), error, "FirebasePlugin", "documentExistsInFirestoreCollection", [documentId.toString(), collection]);
-};
-
 exports.fetchDocumentInFirestoreCollection = function (documentId, collection, success, error) {
     if(typeof documentId !== 'string' && typeof documentId !== 'number') return error("'documentId' must be a string or number specifying the Firestore document identifier");
     if(typeof collection !== 'string') return error("'collection' must be a string specifying the Firestore collection name");
@@ -379,10 +361,10 @@ exports.fetchDocumentInFirestoreCollection = function (documentId, collection, s
     exec(success, error, "FirebasePlugin", "fetchDocumentInFirestoreCollection", [documentId.toString(), collection]);
 };
 
-exports.fetchFirestoreCollection = function (collection, filters, success, error) {
+exports.fetchFirestoreCollection = function (collection, success, error) {
     if(typeof collection !== 'string') return error("'collection' must be a string specifying the Firestore collection name");
-    if(filters && (typeof filters !== 'object' || typeof filters.length === 'undefined')) return error("'filters' must be a array specifying a list of filters to apply to documents in the Firestore collection");
-    exec(success, error, "FirebasePlugin", "fetchFirestoreCollection", [collection, filters || []]);
+
+    exec(success, error, "FirebasePlugin", "fetchFirestoreCollection", [collection]);
 };
 
 });

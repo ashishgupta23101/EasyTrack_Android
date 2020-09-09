@@ -32,7 +32,6 @@ export class FcmService {
   async getToken() {
     let token;
 
-    debugger;
     if (this.platform.is('android')) {
       // token = await this.firebase.getToken();
       this.fcm.getToken().then(tokenDevice => {

@@ -55,10 +55,7 @@
             document.addEventListener('deviceready', setupOpenwithIOS, false);
         }
         else {
-            var intentText = localStorage.getItem("intent");
-            if (intentText == null || intentText == '' || intentText == 'undefined') {
-                document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
-            }
+            document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
 
             var intentText = localStorage.getItem("intent");
             if (intentText == null || intentText == '' || intentText == 'undefined') {
@@ -119,8 +116,8 @@
                 items = JSON.stringify(trackingNoString);
                 allData = JSON.parse(items);
                 trackingNoString = allData['android.intent.extra.TEXT'];
-
                 localStorage.setItem("intent", trackingNoString);
+
                 location.reload();
             }
         }

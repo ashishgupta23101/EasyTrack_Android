@@ -54,7 +54,6 @@ export class HomePage implements OnInit {
 
   }
   onSearchChange(searchValue: string): void {
-    debugger;
     this.trackNo = searchValue;
     if (searchValue === 'SHIPMATRIX') {
       this.navCtrl.navigateForward(`/url-changer`);
@@ -276,7 +275,6 @@ export class HomePage implements OnInit {
     this.splashScreen.hide();
   }
   fillCarrierCode(formVal) {
-    debugger;
     if (formVal.TrackingNo === 'SHIPMATRIX') {
       this.navCtrl.navigateForward(`/url-changer`);
     } else {

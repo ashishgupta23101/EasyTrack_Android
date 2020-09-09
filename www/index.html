@@ -51,25 +51,35 @@
         //     });
         // }
 
-        document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
+        if (navigator.userAgent.match(/(iPhone|iPod|iPad)/)) {
+            document.addEventListener('deviceready', setupOpenwithIOS, false);
+        }
+        else {
+            var intentText = localStorage.getItem("intent");
+            if (intentText == null || intentText == '' || intentText == 'undefined') {
+                document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
+            }
 
-        function setupOpenWithAndroidExistingIntent() {
+            var intentText = localStorage.getItem("intent");
+            if (intentText == null || intentText == '' || intentText == 'undefined') {
+                document.addEventListener('deviceReady', setupOpenWithAndroidNewIntent, false);
+            }
+        }
+
+
+        function setupOpenWithAndroidNewIntent() {
             window.plugins.intent.getCordovaIntent(function (Intent) {
                 setIntent(Intent);
             });
         }
 
-        document.addEventListener('deviceReady', setupOpenWithAndroidNewIntent, false);
-
-        function setupOpenWithAndroidNewIntent() {
+        function setupOpenWithAndroidExistingIntent() {
             window.plugins.intent.setNewIntentHandler(function (Intent) {
                 setIntent(Intent);
             });
         }
 
-        document.addEventListener('deviceready', setupOpenwith, false);
-
-        function setupOpenwith() {
+        function setupOpenwithIOS() {
             // Increase verbosity if you need more logs
             //cordova.openwith.setVerbosity(cordova.openwith.DEBUG);
 
@@ -101,16 +111,18 @@
         }
 
         function setIntent(Intent) {
-            var items = JSON.stringify(Intent);
-            var allData = JSON.parse(items);
-            var trackingNoString = allData['extras'];
+            if (JSON.stringify(Intent).includes('SEND')) {
+                var items = JSON.stringify(Intent);
+                var allData = JSON.parse(items);
+                var trackingNoString = allData['extras'];
 
-            items = JSON.stringify(trackingNoString);
-            allData = JSON.parse(items);
-            trackingNoString = allData['android.intent.extra.TEXT'];
+                items = JSON.stringify(trackingNoString);
+                allData = JSON.parse(items);
+                trackingNoString = allData['android.intent.extra.TEXT'];
 
-            localStorage.setItem("intent", trackingNoString);
-            location.reload();
+                localStorage.setItem("intent", trackingNoString);
+                location.reload();
+            }
         }
     </script>
 </head>

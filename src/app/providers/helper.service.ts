@@ -9,7 +9,6 @@ export class HelperService {
 
   
   GetCarrierCode(TrackingNo) {
-    debugger;
     let CarrierCode = '';
     // Pattern patt = Pattern.compile('^[a-zA-Z]');
     if (TrackingNo  ===  '') {

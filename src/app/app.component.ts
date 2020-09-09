@@ -13,12 +13,17 @@ import { Network } from '@ionic-native/network/ngx';
 import { LoaderService } from './providers/loader.service';
 import { QueryParams } from './models/QueryParams';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { FCM } from 'cordova-plugin-fcm-with-dependecy-updated/ionic/ngx';
+
+export enum ConnectionStatusEnum {
+  Online,
+  Offline
+}
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
+
 export class AppComponent {
 
   public appPages = [
@@ -54,6 +59,8 @@ export class AppComponent {
     // }
   ];
 
+  previousStatus;
+
   queryParam: QueryParams;
 
   constructor(
@@ -66,83 +73,66 @@ export class AppComponent {
     private trackService: TrackingService,
     private fcmService: FcmService,
     private network: Network,
-    private iab: InAppBrowser,
-    private fcm: FCM
+    private iab: InAppBrowser
   ) {
     this.splashScreen.show();
+    this.previousStatus = ConnectionStatusEnum.Online;
 
     this.initializeApp();
   }
 
-
-
   initializeApp() {
-    // if (this.platform.is('android')) {
-    //   this.initializeAndroidApp();
-    // }
-    // else {
-    this.initializeOtherApps();
-    // }
-    // this.platform.ready().then(() => {
-    //   this.platform.resume.subscribe(async () => {
-    //     let trackNo = localStorage.getItem("intent");
-    //     if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-    //      // this.navCtrl.navigateForward('/home');
-    //     }
-    //   });
-    //   this.platform.pause.subscribe(async () => {
-    //     this.navCtrl.navigateForward('/home');
-    //   });
-    //   if (this.platform.is('cordova')) {
-
-    //   this.network.onDisconnect().subscribe(()=>
-    //   {
-    //     setTimeout(()=>
-    //     {
-    //       this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-    //     }, 2000);
-    //   });
-    //   this.network.onConnect().subscribe(()=>
-    //   {
-    //     setTimeout(()=>
-    //     {
-    //       this.loadingController.presentToast('dark', 'Internet is Now Connected');
-    //     }, 2000);
-    //   });
-    //   this.statusBar.backgroundColorByHexString('#7606a7');
-    //   this.fcm.notificationSetup();
-    //   this.trackService.GenerateDeviceID();
-
-    // }else{
-    //   localStorage.setItem("deviceID",, 'browser');
-    // }
-    // this.trackService.saveToken();
-    // });
-  }
-
-  initializeOtherApps() {
     this.platform.ready().then(() => {
-      this.platform.resume.subscribe(async () => {
-        let trackNo = localStorage.getItem("intent");
-        if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-          // this.navCtrl.navigateForward('/home');
-        }
-      });
-      this.platform.pause.subscribe(async () => {
-        this.navCtrl.navigateForward('/home');
-      });
       if (this.platform.is('cordova')) {
+        if (this.platform.is('ios')) {
+          this.network.onDisconnect().subscribe(() => {
+            setTimeout(() => {
+              this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
+            }, 2000);
+          });
 
-        this.network.onDisconnect().subscribe(() => {
-          setTimeout(() => {
+          this.network.onConnect().subscribe(() => {
+            setTimeout(() => {
+              this.loadingController.presentToast('dark', 'Internet is Now Connected');
+            }, 2000);
+          });
+        }
+        else {
+          // this.platform.resume.subscribe(async () => {
+          //   let trackNo = localStorage.getItem("intent");
+          //   if(trackNo != '' && trackNo != null && trackNo != 'undefined')
+          //   {
+          //     this.navCtrl.navigateForward(`/home`);
+          //   }
+          // });
+          // watch network for a disconnection
+          let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
+            //   if (this.previousStatus === ConnectionStatusEnum.Online) {
+            //     this.eventCtrl.publish('network:offline');
+            // }
             this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-          }, 2000);
-        });
-        this.network.onConnect().subscribe(() => {
-          setTimeout(() => {
-            // this.loadingController.presentToast('dark', 'Internet is Now Connected');
-          }, 2000);
-        });
+            this.previousStatus = ConnectionStatusEnum.Offline;
+          });
+
+          // stop disconnect watch
+          disconnectSubscription.unsubscribe();
+
+          // watch network for a connection
+          let connectSubscription = this.network.onConnect().subscribe(() => {
+            //   if (this.previousStatus === ConnectionStatusEnum.Offline) {
+            //     this.eventCtrl.publish('network:online');
+            // }
+            if (this.previousStatus == ConnectionStatusEnum.Offline) {
+              setTimeout(() => {
+                this.previousStatus == ConnectionStatusEnum.Online;
+                this.loadingController.presentToast('dark', 'Internet is Now Connected');
+              }, 2000);
+            }
+          });
+          // stop connect watch
+          connectSubscription.unsubscribe();
+        }
+
         this.statusBar.backgroundColorByHexString('#7606a7');
         this.trackService.GenerateDeviceID();
         this.fcmService.notificationSetup();
@@ -151,38 +141,6 @@ export class AppComponent {
       }
       this.trackService.saveToken();
     });
-  }
-
-  initializeAndroidApp() {
-    this.platform.resume.subscribe(async () => {
-      let trackNo = localStorage.getItem("intent");
-      if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-        // this.navCtrl.navigateForward('/home');
-      }
-    });
-    this.platform.pause.subscribe(async () => {
-      // this.navCtrl.navigateForward('/home');
-    });
-    if (this.platform.is('cordova')) {
-
-      this.network.onDisconnect().subscribe(() => {
-        setTimeout(() => {
-          this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-        }, 2000);
-      });
-      this.network.onConnect().subscribe(() => {
-        setTimeout(() => {
-          this.loadingController.presentToast('dark', 'Internet is Now Connected');
-        }, 2000);
-      });
-      this.statusBar.backgroundColorByHexString('#7606a7');
-      this.fcmService.notificationSetup();
-      this.trackService.GenerateDeviceID();
-
-    } else {
-      localStorage.setItem("deviceID", 'browser');
-    }
-    this.trackService.saveToken();
   }
 
   openUrl() {

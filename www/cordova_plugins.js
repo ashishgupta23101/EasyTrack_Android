@@ -33,22 +33,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
-      "id": "cordova-plugin-fcm-with-dependecy-updated.FCMPlugin",
-      "file": "plugins/cordova-plugin-fcm-with-dependecy-updated/www/FCMPlugin.js",
-      "pluginId": "cordova-plugin-fcm-with-dependecy-updated",
-      "clobbers": [
-        "FCM"
-      ]
-    },
-    {
-      "id": "cordova-plugin-firebasex.FirebasePlugin",
-      "file": "plugins/cordova-plugin-firebasex/www/firebase.js",
-      "pluginId": "cordova-plugin-firebasex",
-      "clobbers": [
-        "FirebasePlugin"
-      ]
-    },
-    {
       "id": "cordova-plugin-geolocation.geolocation",
       "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
       "pluginId": "cordova-plugin-geolocation",
@@ -173,18 +157,30 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "cordova.openwith"
       ]
+    },
+    {
+      "id": "cordova-plugin-firebasex.FirebasePlugin",
+      "file": "plugins/cordova-plugin-firebasex/www/firebase.js",
+      "pluginId": "cordova-plugin-firebasex",
+      "clobbers": [
+        "FirebasePlugin"
+      ]
+    },
+    {
+      "id": "cordova-plugin-fcm-with-dependecy-updated.FCMPlugin",
+      "file": "plugins/cordova-plugin-fcm-with-dependecy-updated/www/FCMPlugin.js",
+      "pluginId": "cordova-plugin-fcm-with-dependecy-updated",
+      "clobbers": [
+        "FCM"
+      ]
     }
   ];
   module.exports.metadata = {
     "com-darryncampbell-cordova-plugin-intent": "2.0.0",
     "com.borismus.webintent": "1.0.0",
     "cordova-android-support-gradle-release": "3.0.1",
-    "cordova-plugin-androidx": "2.0.0",
-    "cordova-plugin-androidx-adapter": "1.1.1",
     "cordova-plugin-cszbar": "1.3.2",
     "cordova-plugin-device": "2.0.3",
-    "cordova-plugin-fcm-with-dependecy-updated": "7.0.9",
-    "cordova-plugin-firebasex": "10.1.2",
     "cordova-plugin-geolocation": "4.0.2",
     "cordova-plugin-inappbrowser": "3.1.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
@@ -202,6 +198,10 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-support-google-services": "1.4.0",
     "phonegap-plugin-barcodescanner": "8.0.1",
     "com.napolitano.cordova.plugin.intent": "0.1.3",
-    "cc.fovea.cordova.openwith": "2.0.0"
+    "cc.fovea.cordova.openwith": "2.0.0",
+    "cordova-plugin-androidx": "1.0.2",
+    "cordova-plugin-androidx-adapter": "1.1.1",
+    "cordova-plugin-firebasex": "9.0.1-cli",
+    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1"
   };
 });

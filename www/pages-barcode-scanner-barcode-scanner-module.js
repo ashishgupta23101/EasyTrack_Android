@@ -71,7 +71,7 @@ module.exports = "<ion-header>\n  <ion-toolbar color=\"tertiary\">\n      <ion-b
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ion-content {\n  background-color: black; }\n\nzxing-scanner {\n  background-color: black; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcGFnZXMvYmFyY29kZS1zY2FubmVyL0Q6XFxDb2RlXFxpT1MgQXBwXFxWYWliaGF2XFxBbmRyb2lkXFxDb2RlL3NyY1xcYXBwXFxwYWdlc1xcYmFyY29kZS1zY2FubmVyXFxiYXJjb2RlLXNjYW5uZXIucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0EsdUJBQXVCLEVBQUE7O0FBR3ZCO0VBQ0ksdUJBQXVCLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9wYWdlcy9iYXJjb2RlLXNjYW5uZXIvYmFyY29kZS1zY2FubmVyLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi1jb250ZW50IHtcbmJhY2tncm91bmQtY29sb3I6IGJsYWNrO1xufVxuXG56eGluZy1zY2FubmVyIHtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBibGFjaztcbiAgIFxufSJdfQ== */"
+module.exports = "ion-content {\n  background-color: black; }\n\nzxing-scanner {\n  background-color: black; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcGFnZXMvYmFyY29kZS1zY2FubmVyL0Q6XFxDb2RlXFxFYXN5VHJhY2tBbmRyb2lkXFxJb25pY1xcQ29kZVxcRWFzeVRyYWNrX0FuZHJvaWQvc3JjXFxhcHBcXHBhZ2VzXFxiYXJjb2RlLXNjYW5uZXJcXGJhcmNvZGUtc2Nhbm5lci5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDQSx1QkFBdUIsRUFBQTs7QUFHdkI7RUFDSSx1QkFBdUIsRUFBQSIsImZpbGUiOiJzcmMvYXBwL3BhZ2VzL2JhcmNvZGUtc2Nhbm5lci9iYXJjb2RlLXNjYW5uZXIucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW9uLWNvbnRlbnQge1xuYmFja2dyb3VuZC1jb2xvcjogYmxhY2s7XG59XG5cbnp4aW5nLXNjYW5uZXIge1xuICAgIGJhY2tncm91bmQtY29sb3I6IGJsYWNrO1xuICAgXG59Il19 */"
 
 /***/ }),
 
