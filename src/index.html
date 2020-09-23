@@ -55,6 +55,7 @@
             document.addEventListener('deviceready', setupOpenwithIOS, false);
         }
         else {
+            debugger;
             document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
 
             var intentText = localStorage.getItem("intent");
@@ -95,15 +96,11 @@
             cordova.openwith.addHandler(myHandler);
 
             function myHandler(intent) {
-                if (JSON.stringify(intent).includes("SEND")) {
-                    console.log('intent received');
-                    console.log('  text: ' + intent.text);
-                    if (intent.text != null && intent.text != "") {
-                        localStorage.setItem("intent", intent.text);
-                    }
-                    location.reload();
-                    //alert(localStorage.getItem("intent"));
-                }
+                console.log('intent received');
+                console.log('  text: ' + intent.text);
+                localStorage.setItem("intent", intent.text);
+                location.reload();
+                //alert(localStorage.getItem("intent"));
             }
         }
 
@@ -120,6 +117,10 @@
 
                 location.reload();
             }
+            // else
+            // {
+            //     localStorage.setItem("intent", JSON.stringify(Intent));
+            // }
         }
     </script>
 </head>

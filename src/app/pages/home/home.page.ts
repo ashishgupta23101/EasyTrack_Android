@@ -50,7 +50,7 @@ export class HomePage implements OnInit {
     public helper: HelperService, private trackService: TrackingService, private navCtrl: NavController,
     private fcm: FcmService
     // private webIntent: WebIntent
-    ) {
+  ) {
 
   }
   onSearchChange(searchValue: string): void {
@@ -80,6 +80,7 @@ export class HomePage implements OnInit {
           //alert(JSON.stringify(barcodeData));
 
           this.trackNo = barcodeData.text.replace('\u001d', '');
+          this.trackNo = this.CorrectTrackingNo(this.trackNo);
           this.carCode = this.helper.GetCarrierCode(this.trackNo);
           this.track_Form = this.formBuilder.group({
             TrackingNo: new FormControl(this.trackNo),
@@ -106,6 +107,13 @@ export class HomePage implements OnInit {
         this.trackService.logError(JSON.stringify(error), 'barcode Scan issue');
         this.loadingController.presentToast('Error', 'Something went wrong');
       });
+  }
+
+  CorrectTrackingNo(trackNo: string) {
+    if ((trackNo.length > 20) && trackNo.substring(0, 3) == '420') {
+      this.trackNo = this.trackNo.substring(8);
+    }
+    return this.trackNo;
   }
   // Phonegap Scanner
   scanzBarCode() {
@@ -149,48 +157,7 @@ export class HomePage implements OnInit {
     // this.getIntentValueIfAvailable();
     this.fillIntentValue();
   }
-  getIntentValueIfAvailable() {
-    //   (<any>window).plugins.webintent.getExtra(this.webIntent.EXTRA_TEXT,
-    //     function (url) {
-    //       this.loadingController.presentToast('dark', 'intent received on app launch1 '+url);
-    //     }, function () {
-    //       this.loadingController.presentToast('dark', 'abcd');
-    //     }
-    // );
 
-    // if ((<any>window).plugins)
-    //       (<any>window).plugins.intentShim.getIntent((intent) => {
-    //         // if (intent && intent.data) 
-    //         // {
-    //           this.loadingController.presentToast('error', intent.Data);
-    //           // localStorage.setItem('intent', intent.Data);
-    //         // }
-    //       }, () => console.log("intent error"));
-
-
-    // this.platform.ready().then(() => {
-    // // // // this.webIntent.getIntent().then((data: any) => {
-    // // // //   this.items = JSON.stringify(data);
-    // // // //   this.allData = JSON.parse(this.items);
-    // // // //   this.trackingNoObject = this.allData['clipItems'][0];
-
-    // // // //   this.items = JSON.stringify(this.trackingNoObject);
-    // // // //   this.allData = JSON.parse(this.items);
-    // // // //   var trackingNoString = this.allData['text'];
-
-
-      // this.result = data;   // get data in result variable
-      // this.items = JSON.stringify(this.result); // then convert data to json string
-      // this.allData = JSON.parse(this.items); // parse json data and pass json string
-      // var trackingNoString = this.allData['android.intent.extra.TEXT']; // got result of particular string
-
-
-
-    // // // //   if (trackingNoString != null && trackingNoString != 'undefined' && trackingNoString != '')
-    // // // //     localStorage.setItem('intent', trackingNoString);
-    // // // // }).catch((error: any) => this.loadingController.presentToast('error', 'error in registeringIntent is' + error));
-    // });
-  }
   fillIntentValue() {
     this.trackNo = localStorage.getItem("intent");
     // alert(this.trackNo);
@@ -287,14 +254,16 @@ export class HomePage implements OnInit {
   }
   doTrack(value) {
     try {
-      debugger;
       localStorage.setItem("intent", '');
       this.queryParam = new QueryParams();
-      this.queryParam.TrackingNo = value.TrackingNo;
-      this.queryParam.Carrier = value.Carrier;
-      this.queryParam.Description = value.Description;
-      this.queryParam.Residential = value.Res_Del;
-      this.trackService.getTrackingDetails(this.queryParam);
+      if (this.ValidateTrackNo(value.TrackingNo) === true) {
+        // alert('1111');
+        this.queryParam.TrackingNo = value.TrackingNo;
+        this.queryParam.Carrier = value.Carrier;
+        this.queryParam.Description = value.Description;
+        this.queryParam.Residential = value.Res_Del;
+        this.trackService.getTrackingDetails(this.queryParam);
+      }
     } catch (Exception) {
       this.trackService.logError(JSON.stringify(Exception), 'doTrack-home');
       this.loadingController.presentToast('Error', JSON.stringify(Exception));
@@ -323,5 +292,17 @@ export class HomePage implements OnInit {
     //   if (aData == null) {aData = []; return; }
     //   this.trackService.setarchivePackagestoSession(aData);
     // });
+  }
+
+  ValidateTrackNo(trakNo: string) {
+    if (trakNo.length > 3 && trakNo.substring(0, 3).toLowerCase() === 'tba') {
+      this.loadingController.presentToast('Warning', 'Please track this package via your amazon account.');
+      return false;
+    }
+    if (trakNo.length === 10 && /^[a-zA-Z]{5}/.test(trakNo)) {
+      this.loadingController.presentToast('Warning', 'Invalid Tracking No');
+      return false;
+    }
+    return true;
   }
 }

@@ -145,7 +145,6 @@ var HomePage = /** @class */ (function () {
         this.trackNo = '';
     }
     HomePage.prototype.onSearchChange = function (searchValue) {
-        debugger;
         this.trackNo = searchValue;
         if (searchValue === 'SHIPMATRIX') {
             this.navCtrl.navigateForward("/url-changer");
@@ -173,6 +172,7 @@ var HomePage = /** @class */ (function () {
             if (barcodeData !== null) {
                 //alert(JSON.stringify(barcodeData));
                 _this.trackNo = barcodeData.text.replace('\u001d', '');
+                _this.trackNo = _this.CorrectTrackingNo(_this.trackNo);
                 _this.carCode = _this.helper.GetCarrierCode(_this.trackNo);
                 _this.track_Form = _this.formBuilder.group({
                     TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](_this.trackNo),
@@ -198,6 +198,12 @@ var HomePage = /** @class */ (function () {
             _this.trackService.logError(JSON.stringify(error), 'barcode Scan issue');
             _this.loadingController.presentToast('Error', 'Something went wrong');
         });
+    };
+    HomePage.prototype.CorrectTrackingNo = function (trackNo) {
+        if ((trackNo.length > 20) && trackNo.substring(0, 3) == '420') {
+            this.trackNo = this.trackNo.substring(8);
+        }
+        return this.trackNo;
     };
     // Phonegap Scanner
     HomePage.prototype.scanzBarCode = function () {
@@ -239,39 +245,6 @@ var HomePage = /** @class */ (function () {
         // });
         // this.getIntentValueIfAvailable();
         this.fillIntentValue();
-    };
-    HomePage.prototype.getIntentValueIfAvailable = function () {
-        //   (<any>window).plugins.webintent.getExtra(this.webIntent.EXTRA_TEXT,
-        //     function (url) {
-        //       this.loadingController.presentToast('dark', 'intent received on app launch1 '+url);
-        //     }, function () {
-        //       this.loadingController.presentToast('dark', 'abcd');
-        //     }
-        // );
-        // if ((<any>window).plugins)
-        //       (<any>window).plugins.intentShim.getIntent((intent) => {
-        //         // if (intent && intent.data) 
-        //         // {
-        //           this.loadingController.presentToast('error', intent.Data);
-        //           // localStorage.setItem('intent', intent.Data);
-        //         // }
-        //       }, () => console.log("intent error"));
-        // this.platform.ready().then(() => {
-        // // // // this.webIntent.getIntent().then((data: any) => {
-        // // // //   this.items = JSON.stringify(data);
-        // // // //   this.allData = JSON.parse(this.items);
-        // // // //   this.trackingNoObject = this.allData['clipItems'][0];
-        // // // //   this.items = JSON.stringify(this.trackingNoObject);
-        // // // //   this.allData = JSON.parse(this.items);
-        // // // //   var trackingNoString = this.allData['text'];
-        // this.result = data;   // get data in result variable
-        // this.items = JSON.stringify(this.result); // then convert data to json string
-        // this.allData = JSON.parse(this.items); // parse json data and pass json string
-        // var trackingNoString = this.allData['android.intent.extra.TEXT']; // got result of particular string
-        // // // //   if (trackingNoString != null && trackingNoString != 'undefined' && trackingNoString != '')
-        // // // //     localStorage.setItem('intent', trackingNoString);
-        // // // // }).catch((error: any) => this.loadingController.presentToast('error', 'error in registeringIntent is' + error));
-        // });
     };
     HomePage.prototype.fillIntentValue = function () {
         this.trackNo = localStorage.getItem("intent");
@@ -351,7 +324,6 @@ var HomePage = /** @class */ (function () {
         this.splashScreen.hide();
     };
     HomePage.prototype.fillCarrierCode = function (formVal) {
-        debugger;
         if (formVal.TrackingNo === 'SHIPMATRIX') {
             this.navCtrl.navigateForward("/url-changer");
         }
@@ -365,14 +337,16 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.doTrack = function (value) {
         try {
-            debugger;
             localStorage.setItem("intent", '');
             this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_6__["QueryParams"]();
-            this.queryParam.TrackingNo = value.TrackingNo;
-            this.queryParam.Carrier = value.Carrier;
-            this.queryParam.Description = value.Description;
-            this.queryParam.Residential = value.Res_Del;
-            this.trackService.getTrackingDetails(this.queryParam);
+            if (this.ValidateTrackNo(value.TrackingNo) === true) {
+                // alert('1111');
+                this.queryParam.TrackingNo = value.TrackingNo;
+                this.queryParam.Carrier = value.Carrier;
+                this.queryParam.Description = value.Description;
+                this.queryParam.Residential = value.Res_Del;
+                this.trackService.getTrackingDetails(this.queryParam);
+            }
         }
         catch (Exception) {
             this.trackService.logError(JSON.stringify(Exception), 'doTrack-home');
@@ -401,6 +375,17 @@ var HomePage = /** @class */ (function () {
         //   if (aData == null) {aData = []; return; }
         //   this.trackService.setarchivePackagestoSession(aData);
         // });
+    };
+    HomePage.prototype.ValidateTrackNo = function (trakNo) {
+        if (trakNo.length > 3 && trakNo.substring(0, 3).toLowerCase() === 'tba') {
+            this.loadingController.presentToast('Warning', 'Please track this package via your amazon account.');
+            return false;
+        }
+        if (trakNo.length === 10 && /^[a-zA-Z]{5}/.test(trakNo)) {
+            this.loadingController.presentToast('Warning', 'Invalid Tracking No');
+            return false;
+        }
+        return true;
     };
     HomePage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({

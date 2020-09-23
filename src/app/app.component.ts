@@ -79,6 +79,14 @@ export class AppComponent {
     this.previousStatus = ConnectionStatusEnum.Online;
 
     this.initializeApp();
+    if (this.platform.is('android')) {
+      // this.platform.resume.subscribe(async () => {
+      let trackNo = localStorage.getItem("intent");
+      if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+        this.navCtrl.navigateBack(`/home`);
+      }
+      // });
+    }
   }
 
   initializeApp() {
@@ -100,10 +108,12 @@ export class AppComponent {
         else {
           // this.platform.resume.subscribe(async () => {
           //   let trackNo = localStorage.getItem("intent");
-          //   if(trackNo != '' && trackNo != null && trackNo != 'undefined')
-          //   {
-          //     this.navCtrl.navigateForward(`/home`);
-          //   }
+          //   debugger;
+          //   this.navCtrl.navigateRoot('/home');
+          //   // if(trackNo != '' && trackNo != null && trackNo != 'undefined')
+          //   // {
+          //   // this.navCtrl.navigateBack(`/home`);
+          //   // }
           // });
           // watch network for a disconnection
           let disconnectSubscription = this.network.onDisconnect().subscribe(() => {

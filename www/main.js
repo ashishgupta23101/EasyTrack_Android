@@ -888,11 +888,12 @@ module.exports = "<ion-app>\n  <ion-split-pane>\n    <ion-menu>\n      <ion-head
 /*!**********************************!*\
   !*** ./src/app/app.component.ts ***!
   \**********************************/
-/*! exports provided: AppComponent */
+/*! exports provided: ConnectionStatusEnum, AppComponent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionStatusEnum", function() { return ConnectionStatusEnum; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
@@ -916,6 +917,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var ConnectionStatusEnum;
+(function (ConnectionStatusEnum) {
+    ConnectionStatusEnum[ConnectionStatusEnum["Online"] = 0] = "Online";
+    ConnectionStatusEnum[ConnectionStatusEnum["Offline"] = 1] = "Offline";
+})(ConnectionStatusEnum || (ConnectionStatusEnum = {}));
 var AppComponent = /** @class */ (function () {
     function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab) {
         this.platform = platform;
@@ -960,39 +966,70 @@ var AppComponent = /** @class */ (function () {
             //   icon: 'help-circle'
             // }
         ];
+        debugger;
         this.splashScreen.show();
+        this.previousStatus = ConnectionStatusEnum.Online;
         this.initializeApp();
+        if (this.platform.is('android')) {
+            // this.platform.resume.subscribe(async () => {
+            var trackNo = localStorage.getItem("intent");
+            if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+                this.navCtrl.navigateBack("/home");
+            }
+            // });
+        }
     }
     AppComponent.prototype.initializeApp = function () {
         var _this = this;
         this.platform.ready().then(function () {
-            _this.platform.resume.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-                var trackNo;
-                return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                    trackNo = localStorage.getItem("intent");
-                    if (trackNo !== null && trackNo !== undefined && trackNo !== '') {
-                        // this.navCtrl.navigateForward('/home');
-                    }
-                    return [2 /*return*/];
-                });
-            }); });
-            _this.platform.pause.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-                return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                    this.navCtrl.navigateForward('/home');
-                    return [2 /*return*/];
-                });
-            }); });
             if (_this.platform.is('cordova')) {
-                _this.network.onDisconnect().subscribe(function () {
-                    setTimeout(function () {
+                if (_this.platform.is('ios')) {
+                    _this.network.onDisconnect().subscribe(function () {
+                        setTimeout(function () {
+                            _this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
+                        }, 2000);
+                    });
+                    _this.network.onConnect().subscribe(function () {
+                        setTimeout(function () {
+                            _this.loadingController.presentToast('dark', 'Internet is Now Connected');
+                        }, 2000);
+                    });
+                }
+                else {
+                    // this.platform.resume.subscribe(async () => {
+                    //   let trackNo = localStorage.getItem("intent");
+                    //   debugger;
+                    //   this.navCtrl.navigateRoot('/home');
+                    //   // if(trackNo != '' && trackNo != null && trackNo != 'undefined')
+                    //   // {
+                    //   // this.navCtrl.navigateBack(`/home`);
+                    //   // }
+                    // });
+                    // watch network for a disconnection
+                    var disconnectSubscription = _this.network.onDisconnect().subscribe(function () {
+                        //   if (this.previousStatus === ConnectionStatusEnum.Online) {
+                        //     this.eventCtrl.publish('network:offline');
+                        // }
                         _this.loadingController.presentToast('dark', 'Please check your Internet Conenction');
-                    }, 2000);
-                });
-                _this.network.onConnect().subscribe(function () {
-                    setTimeout(function () {
-                        // this.loadingController.presentToast('dark', 'Internet is Now Connected');
-                    }, 2000);
-                });
+                        _this.previousStatus = ConnectionStatusEnum.Offline;
+                    });
+                    // stop disconnect watch
+                    disconnectSubscription.unsubscribe();
+                    // watch network for a connection
+                    var connectSubscription = _this.network.onConnect().subscribe(function () {
+                        //   if (this.previousStatus === ConnectionStatusEnum.Offline) {
+                        //     this.eventCtrl.publish('network:online');
+                        // }
+                        if (_this.previousStatus == ConnectionStatusEnum.Offline) {
+                            setTimeout(function () {
+                                _this.previousStatus == ConnectionStatusEnum.Online;
+                                _this.loadingController.presentToast('dark', 'Internet is Now Connected');
+                            }, 2000);
+                        }
+                    });
+                    // stop connect watch
+                    connectSubscription.unsubscribe();
+                }
                 _this.statusBar.backgroundColorByHexString('#7606a7');
                 _this.trackService.GenerateDeviceID();
                 _this.fcmService.notificationSetup();
@@ -1827,7 +1864,6 @@ var HelperService = /** @class */ (function () {
     function HelperService() {
     }
     HelperService.prototype.GetCarrierCode = function (TrackingNo) {
-        debugger;
         var CarrierCode = '';
         // Pattern patt = Pattern.compile('^[a-zA-Z]');
         if (TrackingNo === '') {
@@ -2739,7 +2775,6 @@ var FcmService = /** @class */ (function () {
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        debugger;
                         if (this.platform.is('android')) {
                             // token = await this.firebase.getToken();
                             this.fcm.getToken().then(function (tokenDevice) {
@@ -2863,28 +2898,39 @@ var FcmService = /** @class */ (function () {
     };
     FcmService.prototype.onNotificationsAndroid = function () {
         var _this = this;
-        this.fcm.onNotification().subscribe(function (msg) {
-            var trackingNo = _this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
-            var carrier = _this.getValueFromNotification(JSON.stringify(msg), "Carrier");
-            _this.storage.get('apiData').then(function (aData) {
-                if (aData !== null && aData !== undefined) {
-                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
-                    src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
+        // this.platform.ready().then(() => {
+        //   this.LoadingController.presentToast('dark', 'platform is ready');
+        // });
+        try {
+            this.fcm.onNotification().subscribe(function (msg) {
+                if (msg.wasTapped) {
+                    var trackingNo = _this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
+                    var carrier = _this.getValueFromNotification(JSON.stringify(msg), "Carrier");
+                    _this.storage.get('apiData').then(function (aData) {
+                        if (aData !== null && aData !== undefined) {
+                            src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
+                            src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
+                        }
+                    });
+                    try {
+                        _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
+                        _this.queryParam.TrackingNo = trackingNo;
+                        _this.queryParam.Carrier = carrier;
+                        _this.queryParam.Description = '';
+                        _this.queryParam.Residential = 'false';
+                        _this.trackService.getTrackingDetails(_this.queryParam);
+                    }
+                    catch (Exception) {
+                        _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
+                        // this.loadingController.presentToast('Error', JSON.stringify(Exception));
+                    }
                 }
             });
-            try {
-                _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
-                _this.queryParam.TrackingNo = trackingNo;
-                _this.queryParam.Carrier = carrier;
-                _this.queryParam.Description = '';
-                _this.queryParam.Residential = 'false';
-                _this.trackService.getTrackingDetails(_this.queryParam);
-            }
-            catch (Exception) {
-                _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
-                // this.loadingController.presentToast('Error', JSON.stringify(Exception));
-            }
-        });
+        }
+        catch (Exception) {
+            this.LoadingController.presentToast('error', JSON.stringify(Exception));
+            // this.loadingController.presentToast('Error', JSON.stringify(Exception));
+        }
     };
     FcmService.prototype.getValueFromNotification = function (notification, field) {
         var value;

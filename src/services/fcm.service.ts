@@ -154,29 +154,31 @@ export class FcmService {
   }
 
   onNotificationsAndroid() {
-    this.fcm.onNotification().subscribe(msg => {
-      let trackingNo = this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
-      let carrier = this.getValueFromNotification(JSON.stringify(msg), "Carrier");
+      this.fcm.onNotification().subscribe(msg => {
+        if (msg.wasTapped) {
+          let trackingNo = this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
+          let carrier = this.getValueFromNotification(JSON.stringify(msg), "Carrier");
 
-      this.storage.get('apiData').then(aData => {
-        if (aData !== null && aData !== undefined) {
-          SessionData.apiURL = aData.apiURL;
-          SessionData.apiType = aData.apiType;
+          this.storage.get('apiData').then(aData => {
+            if (aData !== null && aData !== undefined) {
+              SessionData.apiURL = aData.apiURL;
+              SessionData.apiType = aData.apiType;
+            }
+          });
+
+          try {
+            this.queryParam = new QueryParams();
+            this.queryParam.TrackingNo = trackingNo;
+            this.queryParam.Carrier = carrier;
+            this.queryParam.Description = '';
+            this.queryParam.Residential = 'false';
+            this.trackService.getTrackingDetails(this.queryParam);
+          } catch (Exception) {
+            this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
+            // this.loadingController.presentToast('Error', JSON.stringify(Exception));
+          }
         }
       });
-
-      try {
-        this.queryParam = new QueryParams();
-        this.queryParam.TrackingNo = trackingNo;
-        this.queryParam.Carrier = carrier;
-        this.queryParam.Description = '';
-        this.queryParam.Residential = 'false';
-        this.trackService.getTrackingDetails(this.queryParam);
-      } catch (Exception) {
-        this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
-        // this.loadingController.presentToast('Error', JSON.stringify(Exception));
-      }
-    });
   }
 
   getValueFromNotification(notification: string, field: string) {

@@ -55,10 +55,8 @@
             document.addEventListener('deviceready', setupOpenwithIOS, false);
         }
         else {
-            var intentText = localStorage.getItem("intent");
-            if (intentText == null || intentText == '' || intentText == 'undefined') {
-                document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
-            }
+            debugger;
+            document.addEventListener('deviceReady', setupOpenWithAndroidExistingIntent, false);
 
             var intentText = localStorage.getItem("intent");
             if (intentText == null || intentText == '' || intentText == 'undefined') {
@@ -98,15 +96,11 @@
             cordova.openwith.addHandler(myHandler);
 
             function myHandler(intent) {
-                if (JSON.stringify(intent).includes("SEND")) {
-                    console.log('intent received');
-                    console.log('  text: ' + intent.text);
-                    if (intent.text != null && intent.text != "") {
-                        localStorage.setItem("intent", intent.text);
-                    }
-                    location.reload();
-                    //alert(localStorage.getItem("intent"));
-                }
+                console.log('intent received');
+                console.log('  text: ' + intent.text);
+                localStorage.setItem("intent", intent.text);
+                location.reload();
+                //alert(localStorage.getItem("intent"));
             }
         }
 
@@ -119,10 +113,14 @@
                 items = JSON.stringify(trackingNoString);
                 allData = JSON.parse(items);
                 trackingNoString = allData['android.intent.extra.TEXT'];
-
                 localStorage.setItem("intent", trackingNoString);
+
                 location.reload();
             }
+            // else
+            // {
+            //     localStorage.setItem("intent", JSON.stringify(Intent));
+            // }
         }
     </script>
 </head>
