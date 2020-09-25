@@ -34,6 +34,7 @@ import { HomePageModule } from './pages/home/home.module';
 // import { FCM } from '@ionic-native/fcm/ngx';
 import { FCM } from 'cordova-plugin-fcm-with-dependecy-updated/ionic/ngx';
 import { WebIntent } from '@ionic-native/web-intent/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 const config = {
   apiKey: "AIzaSyB-31B97WmwEKjgyOk731wuYFP2vjDDxI8",
@@ -76,6 +77,7 @@ driverOrder: ['indexeddb', 'sqlite', 'websql']
     Network,
     WebIntent,
     InAppBrowser,
+    ScreenOrientation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent]
 })

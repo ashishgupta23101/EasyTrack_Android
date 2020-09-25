@@ -176,6 +176,16 @@ export class TrackingService {
         this.loadingController.presentToast('alert', 'Invalid Request');
       }
   }
+
+  // Get TNC API
+  TNCapi(trackingNo:string): Observable<any> {
+    let request = {"TrackingNo":trackingNo};
+    return this.http.post(SessionData.apiURL + environment.tncApi , request, {
+      headers: new HttpHeaders()
+      .set('Content-Type', 'application/json')
+    });
+  }
+
   /// Edit package 
   editPackageDetails(packageDetails: EditPackage): Observable<any> {
     return this.http.put(SessionData.apiURL + environment.savePreferances, packageDetails, {
@@ -267,7 +277,7 @@ export class TrackingService {
   }
   /// track package
   private trackPackages(_queryParam: QueryParams): Observable<any> {
-
+    try {
     let trackingAPI = environment.trackingAPI;
     trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
     trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
@@ -279,6 +289,11 @@ export class TrackingService {
       headers: new HttpHeaders()
         .set('Content-Type', 'application/json')
     });
+  }
+  catch (exc) {
+    this.loadingController.presentToast('dark', 'Error: ' + exc);
+    return null;
+  }
   }
   /// set active package data in sessions
   setPackagestoSession(tData: any) {

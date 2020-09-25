@@ -13,6 +13,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { LoaderService } from './providers/loader.service';
 import { QueryParams } from './models/QueryParams';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 export enum ConnectionStatusEnum {
   Online,
@@ -73,7 +74,8 @@ export class AppComponent {
     private trackService: TrackingService,
     private fcmService: FcmService,
     private network: Network,
-    private iab: InAppBrowser
+    private iab: InAppBrowser,
+    private screenOrientation: ScreenOrientation
   ) {
     this.splashScreen.show();
     this.previousStatus = ConnectionStatusEnum.Online;
@@ -90,6 +92,7 @@ export class AppComponent {
   }
 
   initializeApp() {
+    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         if (this.platform.is('ios')) {
