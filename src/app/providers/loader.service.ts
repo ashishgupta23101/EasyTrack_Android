@@ -12,19 +12,17 @@ export class LoaderService {
     public alertController: AlertController) { }
 
   async present(msgdata: string) {
-    if (!this.isLoading) {
-      this.isLoading = true;
-      return await this.loadingController.create({
-        message: msgdata
-      }).then(a => {
-        a.present().then(() => {
-          console.log('presented');
-          if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
-          }
-        });
+    this.isLoading = true;
+    return await this.loadingController.create({
+      message: msgdata
+    }).then(a => {
+      a.present().then(() => {
+        console.log('presented');
+        if (!this.isLoading) {
+          a.dismiss().then(() => console.log('abort presenting'));
+        }
       });
-    }
+    });
   }
 
   async dismiss() {

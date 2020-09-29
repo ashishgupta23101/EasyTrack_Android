@@ -195,7 +195,6 @@ export class TrackingService {
   }
   /// save Error 
   logError(errormsg: string, errorLoc: string) {
-    debugger;
     const errorData = new ErrorDetails();
     let id = localStorage.getItem("deviceID");
 

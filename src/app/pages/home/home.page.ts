@@ -56,7 +56,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     private fcm: FcmService
     // private webIntent: WebIntent
   ) {
-    localStorage.setItem("isScanned", 'false');
+    // localStorage.setItem("isScanned", 'false');
   }
   gotoScanner() {
     this.navCtrl.navigateForward(`/barcode-scanner`);
@@ -100,9 +100,9 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 
   CorrectTrackingNo(trackNo: string) {
     if ((trackNo.length > 20) && trackNo.substring(0, 3) == '420') {
-      this.trackNo = this.trackNo.substring(8);
+      trackNo = trackNo.substring(8);
     }
-    return this.trackNo;
+    return trackNo;
   }
 
   // Phonegap Scanner	
@@ -223,8 +223,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   // }
 
   ionViewWillEnter() {
-
-
+    this.splashScreen.hide();
     //this.fillIntentValue();	
     this.clearTrack();
     let isLastScanned = localStorage.getItem("isScanned");
@@ -235,7 +234,6 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
       this.fillIntentValue();
     }
     this.setfilteringDatestoSession();
-    this.splashScreen.hide();
     localStorage.setItem("isScanned", 'false');
   }
 
@@ -261,27 +259,30 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
         this.trackService.TNCapi(TrackingNo).subscribe(
           data => {
             this.loadingController.dismiss();
+            // this.loadingController.presentToast('dark', 'Verifying Carrier end');
             this.subComponentOpened = false;
             // console.log('CarrierDetails' + JSON.stringify(data))	
             this.carrierCode = data.ResponseData.Carrier;
             // this.carCode = this.carrierCode === 'R' ? 'F' : this.carrierCode;
 
             if (this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === '' || this.carrierCode === undefined) {
-              this.loadingController.presentToast('Error', 'Invalid Tracking No.');
+              this.carrierSelectRef.open();
             }
             else {
               if (isScanned === true) {
                 localStorage.setItem("isScanned", 'true');
-                this.doTrack(this.track_Form.value);
               } else {
                 localStorage.setItem("isScanned", 'false');
               }
+              this.doTrack(this.track_Form.value, this.carrierCode);
             }
 
           }, error => {
             this.carrierCode = '';
             this.loadingController.dismiss();
+            // this.loadingController.presentToast('dark', 'Carrier end by error');
             this.subComponentOpened = false;
+            this.carrierSelectRef.open();
             this.loadingController.presentToast('Error', 'Unable to verify carrier.');
             this.trackService.logError(JSON.stringify(error), 'fillCarrierCode');
           });
@@ -295,23 +296,16 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  doTrack(value) {
+  doTrack(value, ccode = "NA") {
     try {
-      debugger;
-      if (this.carrierSelectRef.value !== '' && this.carrierSelectRef.value !== null && this.carrierSelectRef.value !== 'null' && this.carrierSelectRef.value !== undefined) {
-        this.carrierCode = this.carrierSelectRef.value;
-      }
-      if (this.carrierCode === '' || this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === undefined) {
-        this.carrierSelectRef.open();
-      } else {
-        localStorage.setItem("intent", '');
-        this.queryParam = new QueryParams();
-        this.queryParam.TrackingNo = value.TrackingNo;
-        this.queryParam.Carrier = this.carrierCode;
-        this.queryParam.Description = '';
-        this.queryParam.Residential = 'true';
-        this.trackService.getTrackingDetails(this.queryParam);
-      }
+      localStorage.setItem("intent", '');
+      this.carrierCode = ccode == "NA" ? this.carrierSelectRef.value : ccode;
+      this.queryParam = new QueryParams();
+      this.queryParam.TrackingNo = value.TrackingNo;
+      this.queryParam.Carrier = this.carrierCode;
+      this.queryParam.Description = '';
+      this.queryParam.Residential = 'true';
+      this.trackService.getTrackingDetails(this.queryParam);
     } catch (Exception) {
       this.trackService.logError(JSON.stringify(Exception), 'doTrack-home');
       this.loadingController.presentToast('Error', JSON.stringify(Exception));
