@@ -7183,3 +7183,11 @@ plugins/cordova-plugin-screen-orientation/www/screenorientation.js
 platforms/android/app/src/main/assets/www/plugins/cordova-plugin-screen-orientation/www/screenorientation.js
 platforms/android/app/src/main/java/cordova/plugins/screenorientation/CDVOrientation.java
 platforms/android/platform_www/plugins/cordova-plugin-screen-orientation/www/screenorientation.js
+platforms/android/app/src/main/assets/www/assets/logos/Canpar-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/DHL-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/FedEx-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/LSO-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/Ontrac-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/Purolator-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/UPS-Logo.png
+platforms/android/app/src/main/assets/www/assets/logos/USPS-Logo.png

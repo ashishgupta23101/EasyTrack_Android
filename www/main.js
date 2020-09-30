@@ -906,6 +906,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/network/ngx */ "./node_modules/@ionic-native/network/ngx/index.js");
 /* harmony import */ var _providers_loader_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./providers/loader.service */ "./src/app/providers/loader.service.ts");
 /* harmony import */ var _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/in-app-browser/ngx */ "./node_modules/@ionic-native/in-app-browser/ngx/index.js");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "./node_modules/@ionic-native/screen-orientation/ngx/index.js");
+
 
 
 
@@ -923,7 +925,7 @@ var ConnectionStatusEnum;
     ConnectionStatusEnum[ConnectionStatusEnum["Offline"] = 1] = "Offline";
 })(ConnectionStatusEnum || (ConnectionStatusEnum = {}));
 var AppComponent = /** @class */ (function () {
-    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab) {
+    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab, screenOrientation) {
         this.platform = platform;
         this.navCtrl = navCtrl;
         this.splashScreen = splashScreen;
@@ -934,6 +936,7 @@ var AppComponent = /** @class */ (function () {
         this.fcmService = fcmService;
         this.network = network;
         this.iab = iab;
+        this.screenOrientation = screenOrientation;
         this.appPages = [
             {
                 title: 'Home',
@@ -966,7 +969,6 @@ var AppComponent = /** @class */ (function () {
             //   icon: 'help-circle'
             // }
         ];
-        debugger;
         this.splashScreen.show();
         this.previousStatus = ConnectionStatusEnum.Online;
         this.initializeApp();
@@ -981,6 +983,7 @@ var AppComponent = /** @class */ (function () {
     }
     AppComponent.prototype.initializeApp = function () {
         var _this = this;
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
         this.platform.ready().then(function () {
             if (_this.platform.is('cordova')) {
                 if (_this.platform.is('ios')) {
@@ -1060,7 +1063,8 @@ var AppComponent = /** @class */ (function () {
             src_services_tracking_service__WEBPACK_IMPORTED_MODULE_6__["TrackingService"],
             src_services_fcm_service__WEBPACK_IMPORTED_MODULE_7__["FcmService"],
             _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_8__["Network"],
-            _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_10__["InAppBrowser"]])
+            _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_10__["InAppBrowser"],
+            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__["ScreenOrientation"]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -1111,6 +1115,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @ionic-native/in-app-browser/ngx */ "./node_modules/@ionic-native/in-app-browser/ngx/index.js");
 /* harmony import */ var cordova_plugin_fcm_with_dependecy_updated_ionic_ngx__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! cordova-plugin-fcm-with-dependecy-updated/ionic/ngx */ "./node_modules/cordova-plugin-fcm-with-dependecy-updated/ionic/ngx/FCM.js");
 /* harmony import */ var _ionic_native_web_intent_ngx__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @ionic-native/web-intent/ngx */ "./node_modules/@ionic-native/web-intent/ngx/index.js");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "./node_modules/@ionic-native/screen-orientation/ngx/index.js");
 
 
 
@@ -1140,6 +1145,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // import { FCM } from '@ionic-native/fcm/ngx';
+
 
 
 var config = {
@@ -1193,6 +1199,7 @@ var AppModule = /** @class */ (function () {
                 _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_25__["Network"],
                 _ionic_native_web_intent_ngx__WEBPACK_IMPORTED_MODULE_28__["WebIntent"],
                 _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_26__["InAppBrowser"],
+                _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_29__["ScreenOrientation"],
                 { provide: _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouteReuseStrategy"], useClass: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicRouteStrategy"] }],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_7__["AppComponent"]]
         })
@@ -2623,6 +2630,7 @@ var environment = {
     savePreferances: 'SavePreferences',
     saveConfiguration: 'SaveConfigure',
     logErrorMessage: 'LogErrorMessage',
+    tncApi: 'Tracking/Classifier',
     saveDeviceID: 'SaveGsmRegistration',
     // tslint:disable-next-line: max-line-length
     trackingAPI: 'Tracking?TrackingNo=@TrackingNo&Carrier=@Carrier&Description=@Description&Residential=@Residential&DeviceNo=@DeviceNo&AppUser=ShipMatrixApp&AppPwd=ShipMatrixApp&RegistrationId=@RegistrationId',
@@ -2898,39 +2906,30 @@ var FcmService = /** @class */ (function () {
     };
     FcmService.prototype.onNotificationsAndroid = function () {
         var _this = this;
-        // this.platform.ready().then(() => {
-        //   this.LoadingController.presentToast('dark', 'platform is ready');
-        // });
-        try {
-            this.fcm.onNotification().subscribe(function (msg) {
-                if (msg.wasTapped) {
-                    var trackingNo = _this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
-                    var carrier = _this.getValueFromNotification(JSON.stringify(msg), "Carrier");
-                    _this.storage.get('apiData').then(function (aData) {
-                        if (aData !== null && aData !== undefined) {
-                            src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
-                            src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
-                        }
-                    });
-                    try {
-                        _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
-                        _this.queryParam.TrackingNo = trackingNo;
-                        _this.queryParam.Carrier = carrier;
-                        _this.queryParam.Description = '';
-                        _this.queryParam.Residential = 'false';
-                        _this.trackService.getTrackingDetails(_this.queryParam);
+        this.fcm.onNotification().subscribe(function (msg) {
+            if (msg.wasTapped) {
+                var trackingNo = _this.getValueFromNotification(JSON.stringify(msg), "TrackingNo");
+                var carrier = _this.getValueFromNotification(JSON.stringify(msg), "Carrier");
+                _this.storage.get('apiData').then(function (aData) {
+                    if (aData !== null && aData !== undefined) {
+                        src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL = aData.apiURL;
+                        src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiType = aData.apiType;
                     }
-                    catch (Exception) {
-                        _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
-                        // this.loadingController.presentToast('Error', JSON.stringify(Exception));
-                    }
+                });
+                try {
+                    _this.queryParam = new src_app_models_QueryParams__WEBPACK_IMPORTED_MODULE_7__["QueryParams"]();
+                    _this.queryParam.TrackingNo = trackingNo;
+                    _this.queryParam.Carrier = carrier;
+                    _this.queryParam.Description = '';
+                    _this.queryParam.Residential = 'false';
+                    _this.trackService.getTrackingDetails(_this.queryParam);
                 }
-            });
-        }
-        catch (Exception) {
-            this.LoadingController.presentToast('error', JSON.stringify(Exception));
-            // this.loadingController.presentToast('Error', JSON.stringify(Exception));
-        }
+                catch (Exception) {
+                    _this.trackService.logError(JSON.stringify(Exception), 'notificationSetup()');
+                    // this.loadingController.presentToast('Error', JSON.stringify(Exception));
+                }
+            }
+        });
     };
     FcmService.prototype.getValueFromNotification = function (notification, field) {
         var value;
@@ -3049,6 +3048,7 @@ var TrackingService = /** @class */ (function () {
         var id = localStorage.getItem("deviceID");
         if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
             queryParam.DeviceNo = id;
+            this.loadingController.dismiss();
             this.loadingController.present('Tracking package....');
             this.trackPackages(queryParam).subscribe(function (data) {
                 // tslint:disable-next-line: no-debugger
@@ -3177,6 +3177,14 @@ var TrackingService = /** @class */ (function () {
             this.loadingController.presentToast('alert', 'Invalid Request');
         }
     };
+    // Get TNC API
+    TrackingService.prototype.TNCapi = function (trackingNo) {
+        var request = { "TrackingNo": trackingNo };
+        return this.http.post(src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL + src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].tncApi, request, {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]()
+                .set('Content-Type', 'application/json')
+        });
+    };
     /// Edit package 
     TrackingService.prototype.editPackageDetails = function (packageDetails) {
         return this.http.put(src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL + src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].savePreferances, packageDetails, {
@@ -3186,7 +3194,6 @@ var TrackingService = /** @class */ (function () {
     };
     /// save Error 
     TrackingService.prototype.logError = function (errormsg, errorLoc) {
-        debugger;
         var errorData = new src_app_models_error__WEBPACK_IMPORTED_MODULE_12__["ErrorDetails"]();
         var id = localStorage.getItem("deviceID");
         if (id !== 'null' && id !== null && id !== undefined && id !== '') {
@@ -3268,17 +3275,23 @@ var TrackingService = /** @class */ (function () {
     };
     /// track package
     TrackingService.prototype.trackPackages = function (_queryParam) {
-        var trackingAPI = src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].trackingAPI;
-        trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
-        trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
-        trackingAPI = trackingAPI.replace("@Residential", _queryParam.Residential === null || _queryParam.Residential === '' || _queryParam.Residential === undefined ? 'false' : _queryParam.Residential);
-        trackingAPI = trackingAPI.replace("@Description", _queryParam.Description === null || _queryParam.Description === undefined ? '' : _queryParam.Description);
-        trackingAPI = trackingAPI.replace("@DeviceNo", _queryParam.DeviceNo);
-        trackingAPI = trackingAPI.replace("@RegistrationId", Object(uuid__WEBPACK_IMPORTED_MODULE_4__["v4"])());
-        return this.http.post(src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL + trackingAPI, null, {
-            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]()
-                .set('Content-Type', 'application/json')
-        });
+        try {
+            var trackingAPI = src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].trackingAPI;
+            trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
+            trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
+            trackingAPI = trackingAPI.replace("@Residential", _queryParam.Residential === null || _queryParam.Residential === '' || _queryParam.Residential === undefined ? 'false' : _queryParam.Residential);
+            trackingAPI = trackingAPI.replace("@Description", _queryParam.Description === null || _queryParam.Description === undefined ? '' : _queryParam.Description);
+            trackingAPI = trackingAPI.replace("@DeviceNo", _queryParam.DeviceNo);
+            trackingAPI = trackingAPI.replace("@RegistrationId", Object(uuid__WEBPACK_IMPORTED_MODULE_4__["v4"])());
+            return this.http.post(src_app_models_active_packages__WEBPACK_IMPORTED_MODULE_9__["SessionData"].apiURL + trackingAPI, null, {
+                headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]()
+                    .set('Content-Type', 'application/json')
+            });
+        }
+        catch (exc) {
+            this.loadingController.presentToast('dark', 'Error: ' + exc);
+            return null;
+        }
     };
     /// set active package data in sessions
     TrackingService.prototype.setPackagestoSession = function (tData) {

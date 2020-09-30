@@ -173,6 +173,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "FCM"
       ]
+    },
+    {
+      "id": "cordova-plugin-screen-orientation.screenorientation",
+      "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+      "pluginId": "cordova-plugin-screen-orientation",
+      "clobbers": [
+        "cordova.plugins.screenorientation"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -202,6 +210,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-androidx": "1.0.2",
     "cordova-plugin-androidx-adapter": "1.1.1",
     "cordova-plugin-firebasex": "9.0.1-cli",
-    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1"
+    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
+    "cordova-plugin-screen-orientation": "3.0.2"
   };
 });

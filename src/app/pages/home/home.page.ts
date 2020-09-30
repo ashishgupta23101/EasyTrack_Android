@@ -172,14 +172,6 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  CarrierDropDownPressed() {
-    this.subComponentOpened = true;
-  }
-
-  onCarrierDropdownCancel() {
-    this.subComponentOpened = false;
-  }
-
   ngAfterViewInit() {
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
       debugger;
@@ -194,33 +186,6 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.backButtonSubscription.unsubscribe();
   }
-
-  // ionViewDidLoad() {
-  //   // this.platform.ready().then(() => {
-  //   (<any>window).plugins.intent.getCordovaIntent(
-  //     function (Intent) {
-  //       //you should filter on the intents you actually want to receive based on Intent.action
-  //       this.loadingController.presentToast('dark', 'intent received on app launch1');
-  //       localStorage.setItem('intent', JSON.stringify(Intent));
-  //     },
-  //     function () {
-  //       console.log('Error getting cordova intent');
-  //     }
-  //   );
-  //   // });
-  // }
-
-  // ionViewDidEnter() {
-  //   // this.platform.ready().then(() => {
-  //   (<any>window).plugins.intent.setNewIntentHandler(
-  //     function (Intent) {
-  //       this.loadingController.presentToast('dark', 'intent received on app launch2');
-  //       localStorage.setItem('intent', JSON.stringify(Intent));
-  //     }
-  //   );
-
-  //   // });
-  // }
 
   ionViewWillEnter() {
     this.splashScreen.hide();
@@ -246,8 +211,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
       this.navCtrl.navigateForward(`/url-changer`);
     } else {
 
-      if (this.ValidateTrackNo(TrackingNo) === true && TrackingNo) {
-        // alert('1111');	
+      if (this.ValidateTrackNo(TrackingNo) && TrackingNo) {
         this.loadingController.present('Verifying Carrier....');
         this.subComponentOpened = true;
         TrackingNo = this.CorrectTrackingNo(TrackingNo);
@@ -258,14 +222,11 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 
         this.trackService.TNCapi(TrackingNo).subscribe(
           data => {
-            this.loadingController.dismiss();
-            // this.loadingController.presentToast('dark', 'Verifying Carrier end');
             this.subComponentOpened = false;
-            // console.log('CarrierDetails' + JSON.stringify(data))	
             this.carrierCode = data.ResponseData.Carrier;
-            // this.carCode = this.carrierCode === 'R' ? 'F' : this.carrierCode;
 
             if (this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === '' || this.carrierCode === undefined) {
+              this.loadingController.dismiss();
               this.carrierSelectRef.open();
             }
             else {
@@ -274,13 +235,14 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
               } else {
                 localStorage.setItem("isScanned", 'false');
               }
-              this.doTrack(this.track_Form.value, this.carrierCode);
+              this.loadingController.dismiss();
+              this.subComponentOpened = false;
+              this.doTrack(data.ResponseData.TrackingNo, this.carrierCode);
             }
 
           }, error => {
             this.carrierCode = '';
             this.loadingController.dismiss();
-            // this.loadingController.presentToast('dark', 'Carrier end by error');
             this.subComponentOpened = false;
             this.carrierSelectRef.open();
             this.loadingController.presentToast('Error', 'Unable to verify carrier.');
@@ -296,12 +258,12 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  doTrack(value, ccode = "NA") {
+  doTrack(trackingNumber, ccode = "NA") {
     try {
       localStorage.setItem("intent", '');
       this.carrierCode = ccode == "NA" ? this.carrierSelectRef.value : ccode;
       this.queryParam = new QueryParams();
-      this.queryParam.TrackingNo = value.TrackingNo;
+      this.queryParam.TrackingNo = trackingNumber;
       this.queryParam.Carrier = this.carrierCode;
       this.queryParam.Description = '';
       this.queryParam.Residential = 'true';
