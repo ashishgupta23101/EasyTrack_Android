@@ -66,6 +66,9 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     private menuCtrl: MenuController
     // private webIntent: WebIntent
   ) {
+    this.track_Form = this.formBuilder.group({
+      TrackingNo: new FormControl('')
+    });
     // localStorage.setItem("isScanned", 'false');
   }
   gotoScanner() {
@@ -164,6 +167,9 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     //   this.loadingController.presentToast('dark', 'platform is ready');
     // });
     // this.getIntentValueIfAvailable();
+    this.track_Form = this.formBuilder.group({
+      TrackingNo: new FormControl('')
+    });
     this.fillIntentValue();
   }
 
@@ -174,9 +180,6 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
       //alert(this.trackNo);
       this.trackingMode = TrackingMode.Shared;
       TrackingNo = TrackingNo.replace('\u001d', '');
-      this.track_Form = this.formBuilder.group({
-        TrackingNo: new FormControl(TrackingNo)
-      });
       this.GetCarrierByTNC(TrackingNo, TrackingMode.Shared, false);
       localStorage.setItem("intent", '');
       // alert('end' + this.trackNo);
@@ -228,7 +231,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     this.GetCarrierByTNC(formVal.TrackingNo, TrackingMode.Typed);
   }
 
-  GetCarrierByTNC(TrackingNo, mode: TrackingMode, isScanned = false) {
+  GetCarrierByTNC(TrackingNo: string, mode: TrackingMode, isScanned = false) {
     if (TrackingNo === 'SHIPMATRIX') {
       this.navCtrl.navigateForward(`/url-changer`);
     } else {
@@ -239,12 +242,20 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
           this.subComponentOpened = true;
         }
         TrackingNo = this.CorrectTrackingNo(TrackingNo);
+        this.track_Form = this.formBuilder.group({
+          TrackingNo: new FormControl(TrackingNo)
+        });
 
         this.trackService.TNCapi(TrackingNo).subscribe(
           data => {
+            this.track_Form = this.formBuilder.group({
+              TrackingNo: new FormControl(TrackingNo)
+            });
             this.carrierCode = data.ResponseData.Carrier;
-            this.loadingController.dismiss();
-            this.subComponentOpened = false;
+            if (mode != TrackingMode.Shared) {
+              this.loadingController.dismiss();
+              this.subComponentOpened = false;
+            }
 
             if (this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === '' || this.carrierCode === undefined) {
               this.carrierSelectRef.open();
@@ -259,9 +270,14 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
             }
 
           }, error => {
+            this.track_Form = this.formBuilder.group({
+              TrackingNo: new FormControl(TrackingNo)
+            });
             this.carrierCode = '';
-            this.loadingController.dismiss();
-            this.subComponentOpened = false;
+            if (mode != TrackingMode.Shared) {
+              this.loadingController.dismiss();
+              this.subComponentOpened = false;
+            }
             this.carrierSelectRef.open();
             this.loadingController.presentToast('Error', 'Unable to verify carrier.');
             this.trackService.logError(JSON.stringify(error), 'fillCarrierCode');
@@ -269,6 +285,9 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 
       } else {
         this.carrierCode = '';
+        this.track_Form = this.formBuilder.group({
+          TrackingNo: new FormControl(TrackingNo)
+        });
       }
     }
   }

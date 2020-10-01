@@ -85,9 +85,14 @@ export class AppComponent {
 
     this.initializeApp();
     if (this.platform.is('android')) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
+    if (this.platform.is('android')) {
       let trackNo = localStorage.getItem("intent");
       if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
-        this.navCtrl.navigateBack(`/home`);
+        if (window.location.pathname != "/home") {
+          this.navCtrl.navigateRoot(`/home`);
+        }
       }
     }
   }
@@ -95,9 +100,6 @@ export class AppComponent {
   initializeApp() {
 
     // this.initializeSharedIntent();
-    if (this.platform.is('android')) {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-    }
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         if (this.platform.is('ios')) {

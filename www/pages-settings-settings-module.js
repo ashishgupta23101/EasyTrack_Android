@@ -117,9 +117,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/providers/loader.service */ "./src/app/providers/loader.service.ts");
-/* harmony import */ var src_services_tracking_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/services/tracking.service */ "./src/services/tracking.service.ts");
-/* harmony import */ var src_app_models_configuration__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/configuration */ "./src/app/models/configuration.ts");
-/* harmony import */ var _ionic_storage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/storage */ "./node_modules/@ionic/storage/fesm5/ionic-storage.js");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/dist/fesm5.js");
+/* harmony import */ var src_services_tracking_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/services/tracking.service */ "./src/services/tracking.service.ts");
+/* harmony import */ var src_app_models_configuration__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/configuration */ "./src/app/models/configuration.ts");
+/* harmony import */ var _ionic_storage__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/storage */ "./node_modules/@ionic/storage/fesm5/ionic-storage.js");
+
 
 
 
@@ -129,14 +131,41 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var SettingsPage = /** @class */ (function () {
-    function SettingsPage(trackService, router, storage, formBuilder, loadingController) {
+    function SettingsPage(trackService, router, storage, formBuilder, loadingController, menuCtrl, platform, navCtrl) {
         this.trackService = trackService;
         this.router = router;
         this.storage = storage;
         this.formBuilder = formBuilder;
         this.loadingController = loadingController;
+        this.menuCtrl = menuCtrl;
+        this.platform = platform;
+        this.navCtrl = navCtrl;
     }
     SettingsPage.prototype.ngOnInit = function () {
+    };
+    SettingsPage.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.backButtonSubscription = this.platform.backButton.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.menuCtrl.isOpen("start")];
+                    case 1:
+                        if (_a.sent()) {
+                            this.closeMenu();
+                        }
+                        else {
+                            this.navCtrl.navigateRoot("/home");
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    };
+    SettingsPage.prototype.ngOnDestroy = function () {
+        this.backButtonSubscription.unsubscribe();
+    };
+    SettingsPage.prototype.closeMenu = function () {
+        this.menuCtrl.close("start");
     };
     SettingsPage.prototype.ionViewWillEnter = function () {
         this.fillForm();
@@ -145,7 +174,7 @@ var SettingsPage = /** @class */ (function () {
         var _this = this;
         try {
             this.loadingController.present('Saving Configuration.');
-            var _config_1 = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_6__["Configuration"]();
+            var _config_1 = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_7__["Configuration"]();
             var id = localStorage.getItem("deviceID");
             if (id !== 'null' && id !== null && id !== undefined && id !== '') {
                 _config_1.deviceid = id;
@@ -186,7 +215,7 @@ var SettingsPage = /** @class */ (function () {
         }
     };
     SettingsPage.prototype.refresh = function (config) {
-        if (config === void 0) { config = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_6__["Configuration"](); }
+        if (config === void 0) { config = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_7__["Configuration"](); }
         this.setting_Form = this.formBuilder.group({
             PickUp: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](config.pickUpscan),
             OutforDelivery: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](config.outforDelivery),
@@ -200,7 +229,7 @@ var SettingsPage = /** @class */ (function () {
     SettingsPage.prototype.fillForm = function () {
         var _this = this;
         this.storage.get('_deviceConfig').then(function (result) {
-            var config = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_6__["Configuration"]();
+            var config = new src_app_models_configuration__WEBPACK_IMPORTED_MODULE_7__["Configuration"]();
             if (result !== null && result !== undefined) {
                 config = result;
             }
@@ -213,8 +242,11 @@ var SettingsPage = /** @class */ (function () {
             template: __webpack_require__(/*! ./settings.page.html */ "./src/app/pages/settings/settings.page.html"),
             styles: [__webpack_require__(/*! ./settings.page.scss */ "./src/app/pages/settings/settings.page.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_services_tracking_service__WEBPACK_IMPORTED_MODULE_5__["TrackingService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _ionic_storage__WEBPACK_IMPORTED_MODULE_7__["Storage"],
-            _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_4__["LoaderService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_services_tracking_service__WEBPACK_IMPORTED_MODULE_6__["TrackingService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _ionic_storage__WEBPACK_IMPORTED_MODULE_8__["Storage"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_4__["LoaderService"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["MenuController"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["Platform"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"]])
     ], SettingsPage);
     return SettingsPage;
 }());

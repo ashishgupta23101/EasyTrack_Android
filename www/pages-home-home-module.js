@@ -152,6 +152,9 @@ var HomePage = /** @class */ (function () {
         this.isCarrier = true;
         this.trackNo = '';
         this.subComponentOpened = false;
+        this.track_Form = this.formBuilder.group({
+            TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('')
+        });
         // localStorage.setItem("isScanned", 'false');
     }
     HomePage.prototype.gotoScanner = function () {
@@ -160,6 +163,7 @@ var HomePage = /** @class */ (function () {
     // Phonegap Scanner
     HomePage.prototype.scanPGCode = function () {
         var _this = this;
+        this.trackingMode = TrackingMode.Scanned;
         this.subComponentOpened = true;
         this.barcodeScannerOptions = {
             preferFrontCamera: false,
@@ -242,15 +246,19 @@ var HomePage = /** @class */ (function () {
         //   this.loadingController.presentToast('dark', 'platform is ready');
         // });
         // this.getIntentValueIfAvailable();
+        this.track_Form = this.formBuilder.group({
+            TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('')
+        });
         this.fillIntentValue();
     };
     HomePage.prototype.fillIntentValue = function () {
-        this.trackNo = localStorage.getItem("intent");
+        var TrackingNo = localStorage.getItem("intent");
         // alert(this.trackNo);
-        if (this.trackNo !== null && this.trackNo !== undefined && this.trackNo !== '') {
+        if (TrackingNo !== null && TrackingNo !== undefined && TrackingNo !== '') {
             //alert(this.trackNo);
-            this.trackNo = this.trackNo.replace('\u001d', '');
-            this.GetCarrierByTNC(this.trackNo, TrackingMode.Shared);
+            this.trackingMode = TrackingMode.Shared;
+            TrackingNo = TrackingNo.replace('\u001d', '');
+            this.GetCarrierByTNC(TrackingNo, TrackingMode.Shared, false);
             localStorage.setItem("intent", '');
             // alert('end' + this.trackNo);
         }
@@ -298,7 +306,7 @@ var HomePage = /** @class */ (function () {
         //this.fillIntentValue();	
         this.clearTrack();
         var isLastScanned = localStorage.getItem("isScanned");
-        if (isLastScanned === 'true') {
+        if (isLastScanned === 'true' && this.trackingMode == TrackingMode.Scanned) {
             this.scanPGCode();
         }
         if (this.trackNo === 'SHIPMATRIX') {
@@ -308,6 +316,7 @@ var HomePage = /** @class */ (function () {
         localStorage.setItem("isScanned", 'false');
     };
     HomePage.prototype.fillCarrierCode = function (formVal) {
+        this.trackingMode = TrackingMode.Typed;
         this.GetCarrierByTNC(formVal.TrackingNo, TrackingMode.Typed);
     };
     HomePage.prototype.GetCarrierByTNC = function (TrackingNo, mode, isScanned) {
@@ -323,13 +332,18 @@ var HomePage = /** @class */ (function () {
                     this.subComponentOpened = true;
                 }
                 TrackingNo = this.CorrectTrackingNo(TrackingNo);
+                this.track_Form = this.formBuilder.group({
+                    TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
+                });
                 this.trackService.TNCapi(TrackingNo).subscribe(function (data) {
                     _this.track_Form = _this.formBuilder.group({
                         TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
                     });
                     _this.carrierCode = data.ResponseData.Carrier;
-                    _this.loadingController.dismiss();
-                    _this.subComponentOpened = false;
+                    if (mode != TrackingMode.Shared) {
+                        _this.loadingController.dismiss();
+                        _this.subComponentOpened = false;
+                    }
                     if (_this.carrierCode === null || _this.carrierCode === 'null' || _this.carrierCode === '' || _this.carrierCode === undefined) {
                         _this.carrierSelectRef.open();
                     }
@@ -343,9 +357,14 @@ var HomePage = /** @class */ (function () {
                         _this.doTrack(data.ResponseData.TrackingNo, _this.carrierCode);
                     }
                 }, function (error) {
+                    _this.track_Form = _this.formBuilder.group({
+                        TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
+                    });
                     _this.carrierCode = '';
-                    _this.loadingController.dismiss();
-                    _this.subComponentOpened = false;
+                    if (mode != TrackingMode.Shared) {
+                        _this.loadingController.dismiss();
+                        _this.subComponentOpened = false;
+                    }
                     _this.carrierSelectRef.open();
                     _this.loadingController.presentToast('Error', 'Unable to verify carrier.');
                     _this.trackService.logError(JSON.stringify(error), 'fillCarrierCode');

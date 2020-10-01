@@ -105,12 +105,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var HistoryPage = /** @class */ (function () {
     // tslint:disable-next-line: max-line-length
-    function HistoryPage(trackService, loading, alertController, navCtrl, storage) {
+    function HistoryPage(trackService, loading, alertController, navCtrl, storage, menuCtrl, platform) {
         this.trackService = trackService;
         this.loading = loading;
         this.alertController = alertController;
         this.navCtrl = navCtrl;
         this.storage = storage;
+        this.menuCtrl = menuCtrl;
+        this.platform = platform;
         this.searchTerm = '';
         this.sortbyDate = 'Date Created';
         this.dateSelected = Object(_angular_common__WEBPACK_IMPORTED_MODULE_3__["formatDate"])(new Date(), 'MM/dd/yyyy', 'en');
@@ -119,6 +121,30 @@ var HistoryPage = /** @class */ (function () {
         this.readyToLoad = false;
     }
     HistoryPage.prototype.ngOnInit = function () {
+    };
+    HistoryPage.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.backButtonSubscription = this.platform.backButton.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.menuCtrl.isOpen("start")];
+                    case 1:
+                        if (_a.sent()) {
+                            this.closeMenu();
+                        }
+                        else {
+                            this.navCtrl.navigateRoot("/home");
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    };
+    HistoryPage.prototype.ngOnDestroy = function () {
+        this.backButtonSubscription.unsubscribe();
+    };
+    HistoryPage.prototype.closeMenu = function () {
+        this.menuCtrl.close("start");
     };
     HistoryPage.prototype.ionViewWillEnter = function () {
         this.loading.present('Loading Records...');
@@ -271,7 +297,13 @@ var HistoryPage = /** @class */ (function () {
             template: __webpack_require__(/*! ./history.page.html */ "./src/app/pages/history/history.page.html"),
             styles: [__webpack_require__(/*! ./history.page.scss */ "./src/app/pages/history/history.page.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_services_tracking_service__WEBPACK_IMPORTED_MODULE_5__["TrackingService"], src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_7__["LoaderService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"], _ionic_storage__WEBPACK_IMPORTED_MODULE_2__["Storage"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_services_tracking_service__WEBPACK_IMPORTED_MODULE_5__["TrackingService"],
+            src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_7__["LoaderService"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"],
+            _ionic_storage__WEBPACK_IMPORTED_MODULE_2__["Storage"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["MenuController"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["Platform"]])
     ], HistoryPage);
     return HistoryPage;
 }());

@@ -919,16 +919,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// import { WebIntent } from '@ionic-native/web-intent/ngx';
 var ConnectionStatusEnum;
 (function (ConnectionStatusEnum) {
     ConnectionStatusEnum[ConnectionStatusEnum["Online"] = 0] = "Online";
     ConnectionStatusEnum[ConnectionStatusEnum["Offline"] = 1] = "Offline";
 })(ConnectionStatusEnum || (ConnectionStatusEnum = {}));
 var AppComponent = /** @class */ (function () {
-    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab, screenOrientation
-    // private webIntent: WebIntent
-    ) {
+    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab, screenOrientation) {
         this.platform = platform;
         this.navCtrl = navCtrl;
         this.splashScreen = splashScreen;
@@ -978,21 +975,21 @@ var AppComponent = /** @class */ (function () {
         }
         this.previousStatus = ConnectionStatusEnum.Online;
         this.initializeApp();
-        // if (this.platform.is('android')) {
-        //   // this.platform.resume.subscribe(async () => {
-        //   let trackNo = localStorage.getItem("intent");
-        //   if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
-        //     this.navCtrl.navigateBack(`/home`);
-        //   }
-        //   // });
-        // }
+        if (this.platform.is('android')) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
+        if (this.platform.is('android')) {
+            var trackNo_1 = localStorage.getItem("intent");
+            if (trackNo_1 != '' && trackNo_1 != null && trackNo_1 != 'undefined') {
+                if (window.location.pathname != "/home") {
+                    this.navCtrl.navigateRoot("/home");
+                }
+            }
+        }
     }
     AppComponent.prototype.initializeApp = function () {
         var _this = this;
         // this.initializeSharedIntent();
-        if (this.platform.is('ios')) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-        }
         this.platform.ready().then(function () {
             if (_this.platform.is('cordova')) {
                 if (_this.platform.is('ios')) {
@@ -1008,16 +1005,12 @@ var AppComponent = /** @class */ (function () {
                     });
                 }
                 else {
-                    _this.platform.resume.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-                        var trackNo;
-                        return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                            trackNo = localStorage.getItem("intent");
-                            if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
-                                this.navCtrl.navigateBack("/home");
-                            }
-                            return [2 /*return*/];
-                        });
-                    }); });
+                    // this.platform.resume.subscribe(async () => {
+                    // let trackNo = localStorage.getItem("intent");
+                    // if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+                    //   this.navCtrl.navigateBack(`/home`);
+                    // }
+                    // });
                     // watch network for a disconnection
                     var disconnectSubscription = _this.network.onDisconnect().subscribe(function () {
                         //   if (this.previousStatus === ConnectionStatusEnum.Online) {
@@ -1051,8 +1044,6 @@ var AppComponent = /** @class */ (function () {
                 localStorage.setItem("deviceID", 'browser');
             }
             _this.trackService.saveToken();
-        }).catch(function (err) {
-            _this.loadingController.presentToast('dark', 'Err: ' + err);
         });
     };
     // initializeSharedIntent() {
@@ -1088,9 +1079,7 @@ var AppComponent = /** @class */ (function () {
             src_services_fcm_service__WEBPACK_IMPORTED_MODULE_7__["FcmService"],
             _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_8__["Network"],
             _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_10__["InAppBrowser"],
-            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__["ScreenOrientation"]
-            // private webIntent: WebIntent
-        ])
+            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__["ScreenOrientation"]])
     ], AppComponent);
     return AppComponent;
 }());
