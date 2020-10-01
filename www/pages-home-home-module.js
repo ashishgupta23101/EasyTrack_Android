@@ -119,6 +119,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // import { WebIntent } from '@ionic-native/web-intent/ngx';
+var TrackingMode;
+(function (TrackingMode) {
+    TrackingMode[TrackingMode["Scanned"] = 0] = "Scanned";
+    TrackingMode[TrackingMode["Typed"] = 1] = "Typed";
+    TrackingMode[TrackingMode["Shared"] = 2] = "Shared";
+    TrackingMode[TrackingMode["Notification"] = 3] = "Notification";
+})(TrackingMode || (TrackingMode = {}));
 var HomePage = /** @class */ (function () {
     // items: any;
     // result: JSON;
@@ -126,7 +133,7 @@ var HomePage = /** @class */ (function () {
     // trackingNoObject: any;
     // tslint:disable-next-line: max-line-length
     function HomePage(route, platform, splashScreen, barcodeScanner, storage, formBuilder, //private zbar: ZBar,
-    loadingController, helper, trackService, navCtrl, fcm
+    loadingController, helper, trackService, navCtrl, fcm, menuCtrl
     // private webIntent: WebIntent
     ) {
         this.route = route;
@@ -140,6 +147,7 @@ var HomePage = /** @class */ (function () {
         this.trackService = trackService;
         this.navCtrl = navCtrl;
         this.fcm = fcm;
+        this.menuCtrl = menuCtrl;
         this.carrierCode = '';
         this.isCarrier = true;
         this.trackNo = '';
@@ -168,7 +176,7 @@ var HomePage = /** @class */ (function () {
             if (barcodeData !== null) {
                 //alert(JSON.stringify(barcodeData));
                 _this.trackNo = barcodeData.text.replace('\u001d', '');
-                _this.GetCarrierByTNC(_this.trackNo, true);
+                _this.GetCarrierByTNC(_this.trackNo, TrackingMode.Scanned, true);
             }
             else {
                 _this.loadingController.presentToast('Warning', 'No Data Available');
@@ -242,7 +250,7 @@ var HomePage = /** @class */ (function () {
         if (this.trackNo !== null && this.trackNo !== undefined && this.trackNo !== '') {
             //alert(this.trackNo);
             this.trackNo = this.trackNo.replace('\u001d', '');
-            this.GetCarrierByTNC(this.trackNo);
+            this.GetCarrierByTNC(this.trackNo, TrackingMode.Shared);
             localStorage.setItem("intent", '');
             // alert('end' + this.trackNo);
         }
@@ -250,56 +258,43 @@ var HomePage = /** @class */ (function () {
             this.clearTrack();
         }
     };
-    HomePage.prototype.CarrierDropDownPressed = function () {
-        this.subComponentOpened = true;
-    };
-    HomePage.prototype.onCarrierDropdownCancel = function () {
-        this.subComponentOpened = false;
-    };
     HomePage.prototype.ngAfterViewInit = function () {
         var _this = this;
         this.backButtonSubscription = this.platform.backButton.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
-            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                debugger;
-                if (window.location.pathname === "/home" && !this.subComponentOpened) {
-                    // this.loadingController.presentToast('dark', 'window.location.pathname is ' + window.location.pathname);
-                    navigator['app'].exitApp();
-                    // this.navCtrl.exitApp();
+            var _a;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = window.location.pathname === "/home";
+                        if (!_a) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.menuCtrl.isOpen("start")];
+                    case 1:
+                        _a = !(_b.sent());
+                        _b.label = 2;
+                    case 2:
+                        if (_a && !this.subComponentOpened) {
+                            navigator['app'].exitApp();
+                        }
+                        return [4 /*yield*/, this.menuCtrl.isOpen("start")];
+                    case 3:
+                        if (_b.sent()) {
+                            this.closeMenu();
+                        }
+                        this.subComponentOpened = false;
+                        return [2 /*return*/];
                 }
-                this.subComponentOpened = false;
-                return [2 /*return*/];
             });
         }); });
     };
     HomePage.prototype.ngOnDestroy = function () {
         this.backButtonSubscription.unsubscribe();
     };
-    // ionViewDidLoad() {
-    //   // this.platform.ready().then(() => {
-    //   (<any>window).plugins.intent.getCordovaIntent(
-    //     function (Intent) {
-    //       //you should filter on the intents you actually want to receive based on Intent.action
-    //       this.loadingController.presentToast('dark', 'intent received on app launch1');
-    //       localStorage.setItem('intent', JSON.stringify(Intent));
-    //     },
-    //     function () {
-    //       console.log('Error getting cordova intent');
-    //     }
-    //   );
-    //   // });
-    // }
-    // ionViewDidEnter() {
-    //   // this.platform.ready().then(() => {
-    //   (<any>window).plugins.intent.setNewIntentHandler(
-    //     function (Intent) {
-    //       this.loadingController.presentToast('dark', 'intent received on app launch2');
-    //       localStorage.setItem('intent', JSON.stringify(Intent));
-    //     }
-    //   );
-    //   // });
-    // }
+    HomePage.prototype.closeMenu = function () {
+        this.menuCtrl.close("start");
+    };
     HomePage.prototype.ionViewWillEnter = function () {
         this.splashScreen.hide();
+        this.closeMenu();
         //this.fillIntentValue();	
         this.clearTrack();
         var isLastScanned = localStorage.getItem("isScanned");
@@ -313,31 +308,29 @@ var HomePage = /** @class */ (function () {
         localStorage.setItem("isScanned", 'false');
     };
     HomePage.prototype.fillCarrierCode = function (formVal) {
-        this.GetCarrierByTNC(formVal.TrackingNo);
+        this.GetCarrierByTNC(formVal.TrackingNo, TrackingMode.Typed);
     };
-    HomePage.prototype.GetCarrierByTNC = function (TrackingNo, isScanned) {
+    HomePage.prototype.GetCarrierByTNC = function (TrackingNo, mode, isScanned) {
         var _this = this;
         if (isScanned === void 0) { isScanned = false; }
         if (TrackingNo === 'SHIPMATRIX') {
             this.navCtrl.navigateForward("/url-changer");
         }
         else {
-            if (this.ValidateTrackNo(TrackingNo) === true && TrackingNo) {
-                // alert('1111');	
-                this.loadingController.present('Verifying Carrier....');
-                this.subComponentOpened = true;
+            if (this.ValidateTrackNo(TrackingNo) && TrackingNo) {
+                if (mode != TrackingMode.Shared) {
+                    this.loadingController.present('Verifying Carrier....');
+                    this.subComponentOpened = true;
+                }
                 TrackingNo = this.CorrectTrackingNo(TrackingNo);
-                this.track_Form = this.formBuilder.group({
-                    TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
-                });
                 this.trackService.TNCapi(TrackingNo).subscribe(function (data) {
-                    // this.loadingController.presentToast('dark', 'Verifying Carrier end');
-                    _this.subComponentOpened = false;
-                    // console.log('CarrierDetails' + JSON.stringify(data))	
+                    _this.track_Form = _this.formBuilder.group({
+                        TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
+                    });
                     _this.carrierCode = data.ResponseData.Carrier;
-                    // this.carCode = this.carrierCode === 'R' ? 'F' : this.carrierCode;
+                    _this.loadingController.dismiss();
+                    _this.subComponentOpened = false;
                     if (_this.carrierCode === null || _this.carrierCode === 'null' || _this.carrierCode === '' || _this.carrierCode === undefined) {
-                        _this.loadingController.dismiss();
                         _this.carrierSelectRef.open();
                     }
                     else {
@@ -347,13 +340,11 @@ var HomePage = /** @class */ (function () {
                         else {
                             localStorage.setItem("isScanned", 'false');
                         }
-                        _this.loadingController.dismiss();
                         _this.doTrack(data.ResponseData.TrackingNo, _this.carrierCode);
                     }
                 }, function (error) {
                     _this.carrierCode = '';
                     _this.loadingController.dismiss();
-                    // this.loadingController.presentToast('dark', 'Carrier end by error');
                     _this.subComponentOpened = false;
                     _this.carrierSelectRef.open();
                     _this.loadingController.presentToast('Error', 'Unable to verify carrier.');
@@ -366,6 +357,12 @@ var HomePage = /** @class */ (function () {
                     TrackingNo: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](TrackingNo)
                 });
             }
+        }
+    };
+    HomePage.prototype.onSearchChange = function (searchValue) {
+        this.trackNo = searchValue;
+        if (searchValue === 'SHIPMATRIX') {
+            this.navCtrl.navigateForward("/url-changer");
         }
     };
     HomePage.prototype.doTrack = function (trackingNumber, ccode) {
@@ -429,7 +426,8 @@ var HomePage = /** @class */ (function () {
             _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"],
             src_app_providers_loader_service__WEBPACK_IMPORTED_MODULE_11__["LoaderService"],
             src_app_providers_helper_service__WEBPACK_IMPORTED_MODULE_12__["HelperService"], src_services_tracking_service__WEBPACK_IMPORTED_MODULE_4__["TrackingService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"],
-            src_services_fcm_service__WEBPACK_IMPORTED_MODULE_14__["FcmService"]
+            src_services_fcm_service__WEBPACK_IMPORTED_MODULE_14__["FcmService"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["MenuController"]
             // private webIntent: WebIntent
         ])
     ], HomePage);

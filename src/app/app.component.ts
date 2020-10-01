@@ -77,22 +77,27 @@ export class AppComponent {
     private iab: InAppBrowser,
     private screenOrientation: ScreenOrientation
   ) {
-    this.splashScreen.show();
+    let trackNo = localStorage.getItem("intent");
+    if (trackNo == '' || trackNo == null || trackNo == 'undefined') {
+      // this.splashScreen.show();
+    }
     this.previousStatus = ConnectionStatusEnum.Online;
 
     this.initializeApp();
     if (this.platform.is('android')) {
-      // this.platform.resume.subscribe(async () => {
       let trackNo = localStorage.getItem("intent");
       if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
         this.navCtrl.navigateBack(`/home`);
       }
-      // });
     }
   }
 
   initializeApp() {
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+
+    // this.initializeSharedIntent();
+    if (this.platform.is('android')) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         if (this.platform.is('ios')) {
@@ -110,13 +115,10 @@ export class AppComponent {
         }
         else {
           // this.platform.resume.subscribe(async () => {
-          //   let trackNo = localStorage.getItem("intent");
-          //   debugger;
-          //   this.navCtrl.navigateRoot('/home');
-          //   // if(trackNo != '' && trackNo != null && trackNo != 'undefined')
-          //   // {
-          //   // this.navCtrl.navigateBack(`/home`);
-          //   // }
+          // let trackNo = localStorage.getItem("intent");
+          // if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+          //   this.navCtrl.navigateBack(`/home`);
+          // }
           // });
           // watch network for a disconnection
           let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
@@ -156,10 +158,82 @@ export class AppComponent {
     });
   }
 
+  // initializeSharedIntent() {
+  //   if (this.platform.is('ios')) {
+  //     this.setupIOSIntent();
+  //   }
+  //   else {
+  //     this.setupAndroidExistingIntent();
+
+  //     var intentText = localStorage.getItem("intent");
+  //     if (intentText == null || intentText == '' || intentText == 'undefined') {
+  //       this.setupAndroidNewIntent();
+  //     }
+  //   }
+  // }
+
   openUrl() {
     this.platform.ready().then(() => {
       let browser = this.iab.create('https://shipmatrix.com/');
     });
   }
+
+  // setupAndroidNewIntent() {
+  //   (<any>window).plugins.intent.getCordovaIntent((Intent) => {
+  //     this.setIntent(Intent);
+  //   });
+  // }
+
+  // setupAndroidExistingIntent() {
+  //   (<any>window).plugins.intent.setNewIntentHandler((Intent) => {
+  //     this.setIntent(Intent);
+  //   });
+  // }
+
+  // setupIOSIntent() {
+  //   // Increase verbosity if you need more logs
+  //   //cordova.openwith.setVerbosity(cordova.openwith.DEBUG);
+
+  //   // Initialize the plugin
+  //   // cordova.openwith.init(initSuccess, initError);
+
+  //   // function initSuccess() {
+  //   //   console.log('init success!');
+  //   // }
+
+  //   // function initError(err) {
+  //   //   console.log('init failed: ' + err);
+  //   // }
+
+  //   // // Define your file handler
+  //   // cordova.openwith.addHandler(myHandler);
+
+  //   // function myHandler(intent) {
+  //   //   console.log('intent received');
+  //   //   console.log('  text: ' + intent.text);
+  //   //   localStorage.setItem("intent", intent.text);
+  //   //   location.reload();
+  //   //   //alert(localStorage.getItem("intent"));
+  //   // }
+  // }
+
+  // setIntent(Intent) {
+  //   if (JSON.stringify(Intent).includes('SEND')) {
+  //     var items = JSON.stringify(Intent);
+  //     var allData = JSON.parse(items);
+  //     var trackingNoString = allData['extras'];
+
+  //     items = JSON.stringify(trackingNoString);
+  //     allData = JSON.parse(items);
+  //     trackingNoString = allData['android.intent.extra.TEXT'];
+  //     localStorage.setItem("intent", trackingNoString);
+
+  //     location.reload();
+  //   }
+  //   // else
+  //   // {
+  //   //     localStorage.setItem("intent", JSON.stringify(Intent));
+  //   // }
+  // }
 
 }

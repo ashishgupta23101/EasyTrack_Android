@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TrackingService } from 'src/services/tracking.service';
-import { IonSelect, NavController, Platform } from '@ionic/angular';
+import { IonSelect, NavController, Platform, MenuController } from '@ionic/angular';
 import { QueryParams } from 'src/app/models/QueryParams';
 //import { ZBar, ZBarOptions } from '@ionic-native/zbar/ngx';
 import {
@@ -21,6 +21,14 @@ import { disableBindings } from '@angular/core/src/render3';
 import { FcmService } from 'src/services/fcm.service';
 import { ThrowStmt } from '@angular/compiler';
 // import { WebIntent } from '@ionic-native/web-intent/ngx';
+
+enum TrackingMode {
+  Scanned,
+  Typed,
+  Shared,
+  Notification
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -37,6 +45,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   isCarrier = true;
   barcodeScannerOptions: BarcodeScannerOptions;
   trackNo: string = '';
+  trackingMode: TrackingMode;
 
   @ViewChild('carrierList') carrierSelectRef: IonSelect;
 
@@ -53,7 +62,8 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     public formBuilder: FormBuilder, //private zbar: ZBar,
     public loadingController: LoaderService,
     public helper: HelperService, private trackService: TrackingService, private navCtrl: NavController,
-    private fcm: FcmService
+    private fcm: FcmService,
+    private menuCtrl: MenuController
     // private webIntent: WebIntent
   ) {
     // localStorage.setItem("isScanned", 'false');
@@ -63,6 +73,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   }
   // Phonegap Scanner
   scanPGCode() {
+    this.trackingMode = TrackingMode.Scanned;
     this.subComponentOpened = true;
     this.barcodeScannerOptions = {
       preferFrontCamera: false,
@@ -80,7 +91,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
           //alert(JSON.stringify(barcodeData));
 
           this.trackNo = barcodeData.text.replace('\u001d', '');
-          this.GetCarrierByTNC(this.trackNo, true);
+          this.GetCarrierByTNC(this.trackNo, TrackingMode.Scanned, true);
         } else {
           this.loadingController.presentToast('Warning', 'No Data Available');
           this.subComponentOpened = false;
@@ -157,13 +168,16 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   fillIntentValue() {
-    this.trackNo = localStorage.getItem("intent");
+    let TrackingNo = localStorage.getItem("intent");
     // alert(this.trackNo);
-    if (this.trackNo !== null && this.trackNo !== undefined && this.trackNo !== '') {
+    if (TrackingNo !== null && TrackingNo !== undefined && TrackingNo !== '') {
       //alert(this.trackNo);
-
-      this.trackNo = this.trackNo.replace('\u001d', '');
-      this.GetCarrierByTNC(this.trackNo);
+      this.trackingMode = TrackingMode.Shared;
+      TrackingNo = TrackingNo.replace('\u001d', '');
+      this.track_Form = this.formBuilder.group({
+        TrackingNo: new FormControl(TrackingNo)
+      });
+      this.GetCarrierByTNC(TrackingNo, TrackingMode.Shared, false);
       localStorage.setItem("intent", '');
       // alert('end' + this.trackNo);
     }
@@ -174,11 +188,13 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
-      debugger;
-      if (window.location.pathname === "/home" && !this.subComponentOpened) {
-        // this.loadingController.presentToast('dark', 'window.location.pathname is ' + window.location.pathname);
+
+      if (window.location.pathname === "/home" && !(await this.menuCtrl.isOpen("start")) && !this.subComponentOpened) {
         navigator['app'].exitApp();
-        // this.navCtrl.exitApp();
+      }
+
+      if (await this.menuCtrl.isOpen("start")) {
+        this.closeMenu();
       }
       this.subComponentOpened = false;
     });
@@ -187,12 +203,17 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     this.backButtonSubscription.unsubscribe();
   }
 
+  closeMenu() {
+    this.menuCtrl.close("start");
+  }
+
   ionViewWillEnter() {
     this.splashScreen.hide();
+    this.closeMenu();
     //this.fillIntentValue();	
     this.clearTrack();
     let isLastScanned = localStorage.getItem("isScanned");
-    if (isLastScanned === 'true') {
+    if (isLastScanned === 'true' && this.trackingMode == TrackingMode.Scanned) {
       this.scanPGCode();
     }
     if (this.trackNo === 'SHIPMATRIX') {
@@ -203,30 +224,29 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   fillCarrierCode(formVal) {
-    this.GetCarrierByTNC(formVal.TrackingNo);
+    this.trackingMode = TrackingMode.Typed;
+    this.GetCarrierByTNC(formVal.TrackingNo, TrackingMode.Typed);
   }
 
-  GetCarrierByTNC(TrackingNo, isScanned = false) {
+  GetCarrierByTNC(TrackingNo, mode: TrackingMode, isScanned = false) {
     if (TrackingNo === 'SHIPMATRIX') {
       this.navCtrl.navigateForward(`/url-changer`);
     } else {
 
       if (this.ValidateTrackNo(TrackingNo) && TrackingNo) {
-        this.loadingController.present('Verifying Carrier....');
-        this.subComponentOpened = true;
+        if (mode != TrackingMode.Shared) {
+          this.loadingController.present('Verifying Carrier....');
+          this.subComponentOpened = true;
+        }
         TrackingNo = this.CorrectTrackingNo(TrackingNo);
-        this.track_Form = this.formBuilder.group({
-          TrackingNo: new FormControl(TrackingNo)
-        });
-
 
         this.trackService.TNCapi(TrackingNo).subscribe(
           data => {
-            this.subComponentOpened = false;
             this.carrierCode = data.ResponseData.Carrier;
+            this.loadingController.dismiss();
+            this.subComponentOpened = false;
 
             if (this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === '' || this.carrierCode === undefined) {
-              this.loadingController.dismiss();
               this.carrierSelectRef.open();
             }
             else {
@@ -235,8 +255,6 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
               } else {
                 localStorage.setItem("isScanned", 'false');
               }
-              this.loadingController.dismiss();
-              this.subComponentOpened = false;
               this.doTrack(data.ResponseData.TrackingNo, this.carrierCode);
             }
 
@@ -251,10 +269,14 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 
       } else {
         this.carrierCode = '';
-        this.track_Form = this.formBuilder.group({
-          TrackingNo: new FormControl(TrackingNo)
-        });
       }
+    }
+  }
+
+  onSearchChange(searchValue: string): void {
+    this.trackNo = searchValue;
+    if (searchValue === 'SHIPMATRIX') {
+      this.navCtrl.navigateForward(`/url-changer`);
     }
   }
 

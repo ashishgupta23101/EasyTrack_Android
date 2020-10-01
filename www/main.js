@@ -880,7 +880,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-app>\n  <ion-split-pane>\n    <ion-menu>\n      <ion-header style=\"background:url('../assets/slicing/side_menu_bg.png') center no-repeat !important;padding-left: 16px;padding-top: 50px;padding-bottom: 5px;text-align: center\" (click)=\"openUrl()\">\n                    <img style=\"height: 100px;width: 70px;margin: 0px auto;\" src=\"../assets/slicing/side_menu_truck2.png\">\n                    <h6 style=\"color:#fff;margin: 0px auto;\">EasyTrack</h6>\n                    <p style=\"color:#fff;margin: 0px auto;\">www.shipmatrix.com</p>\n      </ion-header>\n      <ion-content>\n        <ion-list>\n          <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of appPages\">\n            <ion-item [routerDirection]=\"'root'\" [routerLink]=\"[p.url]\">\n              <ion-icon color=\"tertiary\" slot=\"start\" [name]=\"p.icon\"></ion-icon>\n              <ion-label>\n                {{p.title}}\n              </ion-label>\n            </ion-item>\n          </ion-menu-toggle>\n        </ion-list>\n      </ion-content>\n    </ion-menu>\n    <ion-router-outlet main></ion-router-outlet>\n  </ion-split-pane>\n</ion-app>"
+module.exports = "<ion-app>\n  <ion-split-pane>\n    <ion-menu side=\"start\" menuId=\"start\">\n      <ion-header style=\"background:url('../assets/slicing/side_menu_bg.png') center no-repeat !important;padding-left: 16px;padding-top: 50px;padding-bottom: 5px;text-align: center\" (click)=\"openUrl()\">\n                    <img style=\"height: 100px;width: 70px;margin: 0px auto;\" src=\"../assets/slicing/side_menu_truck2.png\">\n                    <h6 style=\"color:#fff;margin: 0px auto;\">EasyTrack</h6>\n                    <p style=\"color:#fff;margin: 0px auto;\">www.shipmatrix.com</p>\n      </ion-header>\n      <ion-content>\n        <ion-list>\n          <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of appPages\">\n            <ion-item [routerDirection]=\"'root'\" [routerLink]=\"[p.url]\">\n              <ion-icon color=\"tertiary\" slot=\"start\" [name]=\"p.icon\"></ion-icon>\n              <ion-label>\n                {{p.title}}\n              </ion-label>\n            </ion-item>\n          </ion-menu-toggle>\n        </ion-list>\n      </ion-content>\n    </ion-menu>\n    <ion-router-outlet main></ion-router-outlet>\n  </ion-split-pane>\n</ion-app>"
 
 /***/ }),
 
@@ -919,13 +919,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import { WebIntent } from '@ionic-native/web-intent/ngx';
 var ConnectionStatusEnum;
 (function (ConnectionStatusEnum) {
     ConnectionStatusEnum[ConnectionStatusEnum["Online"] = 0] = "Online";
     ConnectionStatusEnum[ConnectionStatusEnum["Offline"] = 1] = "Offline";
 })(ConnectionStatusEnum || (ConnectionStatusEnum = {}));
 var AppComponent = /** @class */ (function () {
-    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab, screenOrientation) {
+    function AppComponent(platform, navCtrl, splashScreen, statusBar, loadingController, storage, trackService, fcmService, network, iab, screenOrientation
+    // private webIntent: WebIntent
+    ) {
         this.platform = platform;
         this.navCtrl = navCtrl;
         this.splashScreen = splashScreen;
@@ -969,21 +972,27 @@ var AppComponent = /** @class */ (function () {
             //   icon: 'help-circle'
             // }
         ];
-        this.splashScreen.show();
+        var trackNo = localStorage.getItem("intent");
+        if (trackNo == '' || trackNo == null || trackNo == 'undefined') {
+            // this.splashScreen.show();
+        }
         this.previousStatus = ConnectionStatusEnum.Online;
         this.initializeApp();
-        if (this.platform.is('android')) {
-            // this.platform.resume.subscribe(async () => {
-            var trackNo = localStorage.getItem("intent");
-            if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
-                this.navCtrl.navigateBack("/home");
-            }
-            // });
-        }
+        // if (this.platform.is('android')) {
+        //   // this.platform.resume.subscribe(async () => {
+        //   let trackNo = localStorage.getItem("intent");
+        //   if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+        //     this.navCtrl.navigateBack(`/home`);
+        //   }
+        //   // });
+        // }
     }
     AppComponent.prototype.initializeApp = function () {
         var _this = this;
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        // this.initializeSharedIntent();
+        if (this.platform.is('ios')) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
         this.platform.ready().then(function () {
             if (_this.platform.is('cordova')) {
                 if (_this.platform.is('ios')) {
@@ -999,15 +1008,16 @@ var AppComponent = /** @class */ (function () {
                     });
                 }
                 else {
-                    // this.platform.resume.subscribe(async () => {
-                    //   let trackNo = localStorage.getItem("intent");
-                    //   debugger;
-                    //   this.navCtrl.navigateRoot('/home');
-                    //   // if(trackNo != '' && trackNo != null && trackNo != 'undefined')
-                    //   // {
-                    //   // this.navCtrl.navigateBack(`/home`);
-                    //   // }
-                    // });
+                    _this.platform.resume.subscribe(function () { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+                        var trackNo;
+                        return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                            trackNo = localStorage.getItem("intent");
+                            if (trackNo != '' && trackNo != null && trackNo != 'undefined') {
+                                this.navCtrl.navigateBack("/home");
+                            }
+                            return [2 /*return*/];
+                        });
+                    }); });
                     // watch network for a disconnection
                     var disconnectSubscription = _this.network.onDisconnect().subscribe(function () {
                         //   if (this.previousStatus === ConnectionStatusEnum.Online) {
@@ -1041,8 +1051,22 @@ var AppComponent = /** @class */ (function () {
                 localStorage.setItem("deviceID", 'browser');
             }
             _this.trackService.saveToken();
+        }).catch(function (err) {
+            _this.loadingController.presentToast('dark', 'Err: ' + err);
         });
     };
+    // initializeSharedIntent() {
+    //   if (this.platform.is('ios')) {
+    //     this.setupIOSIntent();
+    //   }
+    //   else {
+    //     this.setupAndroidExistingIntent();
+    //     var intentText = localStorage.getItem("intent");
+    //     if (intentText == null || intentText == '' || intentText == 'undefined') {
+    //       this.setupAndroidNewIntent();
+    //     }
+    //   }
+    // }
     AppComponent.prototype.openUrl = function () {
         var _this = this;
         this.platform.ready().then(function () {
@@ -1064,7 +1088,9 @@ var AppComponent = /** @class */ (function () {
             src_services_fcm_service__WEBPACK_IMPORTED_MODULE_7__["FcmService"],
             _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_8__["Network"],
             _ionic_native_in_app_browser_ngx__WEBPACK_IMPORTED_MODULE_10__["InAppBrowser"],
-            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__["ScreenOrientation"]])
+            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_11__["ScreenOrientation"]
+            // private webIntent: WebIntent
+        ])
     ], AppComponent);
     return AppComponent;
 }());
@@ -3048,7 +3074,6 @@ var TrackingService = /** @class */ (function () {
         var id = localStorage.getItem("deviceID");
         if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
             queryParam.DeviceNo = id;
-            this.loadingController.dismiss();
             this.loadingController.present('Tracking package....');
             this.trackPackages(queryParam).subscribe(function (data) {
                 // tslint:disable-next-line: no-debugger
