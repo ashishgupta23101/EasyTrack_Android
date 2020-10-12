@@ -25,16 +25,16 @@ export class TrackingService {
   // tslint:disable-next-line: variable-name
 
   private config: any;
-  private devId : any;
+  private devId: any;
   constructor(
-    private http: HttpClient, 
-    private device: Device, 
-    public loadingController: LoaderService, 
-    private storage: Storage, 
-    private navCtrl: NavController, 
+    private http: HttpClient,
+    private device: Device,
+    public loadingController: LoaderService,
+    private storage: Storage,
+    private navCtrl: NavController,
     private paltform: Platform
-    ) {
-    
+  ) {
+
   }
   filterItems(items: any, searchTerm) {
     return items.filter(item => {
@@ -67,122 +67,123 @@ export class TrackingService {
   /// get Tracking details for package
   getTrackingDetails(queryParam: QueryParams, nav: string = 'det') {
     let id = localStorage.getItem("deviceID");
-      if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
-        queryParam.DeviceNo = id;
-        this.loadingController.present('Tracking package....');
-        this.trackPackages(queryParam).subscribe(data => {
-          // tslint:disable-next-line: no-debugger
-          if (data.Error === true) {
-            console.log('Error = ' + data.Message);
-            this.loadingController.dismiss();
-            this.loadingController.presentToast('Error', 'Invalid Response.');
-            return false;
+    if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
+      queryParam.DeviceNo = id;
+      this.loadingController.present('Tracking package....');
+      this.trackPackages(queryParam).subscribe(data => {
+        // tslint:disable-next-line: no-debugger
+        if (data.Error === true) {
+          console.log('Error = ' + data.Message);
+          this.loadingController.dismiss();
+          this.loadingController.presentToast('Error', 'Invalid Response.');
+          return false;
+        }
+        // Tracking Response
+        this.storage.get('_activePackages').then(tData => {
+          if (tData == null) { tData = []; }
+          localStorage.setItem("SCAC", "");
+          // tslint:disable-next-line: max-line-length
+          const index = tData.findIndex(item => item.trackingNo === queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim());
+          if (index >= 0) { tData.splice(index, 1); }
+          const record: any = data.objResponse;
+          record.trackingNo = queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim();
+          record.ResultData.Description = queryParam.Description;
+          record.ResultData.Residential = queryParam.Residential;
+          tData.push(record);
+          this.storage.set('_activePackages', tData);
+          this.loadingController.dismiss();
+          switch (nav) {
+            case 'actpck':
+              this.navCtrl.navigateForward(`/active-packages`);
+              break;
+            case 'det':
+              this.navCtrl.navigateForward(`/details/${record.trackingNo}`);
+              break;
           }
-          // Tracking Response
-          this.storage.get('_activePackages').then(tData => {
-            if (tData == null) { tData = []; }
-            // tslint:disable-next-line: max-line-length
-            const index = tData.findIndex(item => item.trackingNo === queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim());
-            if (index >= 0) { tData.splice(index, 1); }
-            const record: any = data.objResponse;
-            record.trackingNo = queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim();
-            record.ResultData.Description = queryParam.Description;
-            record.ResultData.Residential = queryParam.Residential;
-            tData.push(record);
-            this.storage.set('_activePackages', tData);
-            this.loadingController.dismiss();
-            switch (nav) {
-              case 'actpck':
-                this.navCtrl.navigateForward(`/active-packages`);
-                break;
-              case 'det':
-                this.navCtrl.navigateForward(`/details/${record.trackingNo}`);
-                break;
-            }
-          });
-        },
-          error => {
-            this.loadingController.dismiss();
-            this.loadingController.presentToast('error', 'Error while Tracking.');
-            this.logError('Error - ' + error, 'Tracking');
-          });
-      } else {
-        this.loadingController.presentToast('alert', 'Invalid Request');
-      }
+        });
+      },
+        error => {
+          this.loadingController.dismiss();
+          this.loadingController.presentToast('error', 'Error while Tracking.');
+          this.logError('Error - ' + error, 'Tracking');
+        });
+    } else {
+      this.loadingController.presentToast('alert', 'Invalid Request');
+    }
   }
 
 
   /// refresh for all package
   refreshTrackingDetails(arrayPackage: Array<ActivePackages>) {
     let id = localStorage.getItem("deviceID");
-      if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
-        this.loadingController.presentToast('alert', 'Retracking active packages.');
-        let isSuccess: number = 0;
-        let i: number = 1;
-        let isFailed: number = 0;
-        arrayPackage.forEach(element => {
-          try {
-            const queryParam = new QueryParams();
-            queryParam.TrackingNo = element.TrackingNo;
-            queryParam.Carrier = element.Carrier;
-            queryParam.DeviceNo = id;
-            queryParam.Description = '';
-            queryParam.Residential = 'false';
-            this.trackPackages(queryParam).subscribe(data => {
-              // tslint:disable-next-line: no-debugger
-              if (data.Error === true) {
-                isFailed++;
-                if (arrayPackage.length === i) {
-                  this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
-                  this.navCtrl.navigateForward('/active-packages');
-                } else { i++; }
-              } else {
-                // Tracking Response
-                this.storage.get('_activePackages').then(tData => {
-                  if (tData == null) { tData = []; }
-                  // tslint:disable-next-line: max-line-length
-                  const index = tData.findIndex(item => item.trackingNo === queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim());
-                  if (index >= 0) { tData.splice(index, 1); }
-                  const record: any = data.objResponse;
-                  record.trackingNo = queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim();
-                  record.ResultData.Description = queryParam.Description;
-                  record.ResultData.Residential = queryParam.Residential;
-                  tData.push(record);
-                  this.storage.set('_activePackages', tData);
-                  isSuccess++;
-                  if (arrayPackage.length === i) {
-                    this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
-                    this.navCtrl.navigateForward('/active-packages');
-                  } else { i++; }
-                });
-              }
-            },
-              error => {
-                isFailed++;
+    if (id !== 'null' && id !== '' && id !== null && id !== undefined) {
+      this.loadingController.presentToast('alert', 'Retracking active packages.');
+      let isSuccess: number = 0;
+      let i: number = 1;
+      let isFailed: number = 0;
+      arrayPackage.forEach(element => {
+        try {
+          const queryParam = new QueryParams();
+          queryParam.TrackingNo = element.TrackingNo;
+          queryParam.Carrier = element.Carrier;
+          queryParam.DeviceNo = id;
+          queryParam.Description = '';
+          queryParam.Residential = 'false';
+          this.trackPackages(queryParam).subscribe(data => {
+            // tslint:disable-next-line: no-debugger
+            if (data.Error === true) {
+              isFailed++;
+              if (arrayPackage.length === i) {
+                this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
+                this.navCtrl.navigateForward('/active-packages');
+              } else { i++; }
+            } else {
+              // Tracking Response
+              this.storage.get('_activePackages').then(tData => {
+                if (tData == null) { tData = []; }
+                // tslint:disable-next-line: max-line-length
+                const index = tData.findIndex(item => item.trackingNo === queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim());
+                if (index >= 0) { tData.splice(index, 1); }
+                const record: any = data.objResponse;
+                record.trackingNo = queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim();
+                record.ResultData.Description = queryParam.Description;
+                record.ResultData.Residential = queryParam.Residential;
+                tData.push(record);
+                this.storage.set('_activePackages', tData);
+                isSuccess++;
                 if (arrayPackage.length === i) {
                   this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
                   this.navCtrl.navigateForward('/active-packages');
                 } else { i++; }
               });
-          } catch (exception) {
-            isFailed++;
-            if (arrayPackage.length === i) {
-              this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
-              this.navCtrl.navigateForward(`/active-packages`);
-            } else { i++; }
-          }
-        });
-      } else {
-        this.loadingController.presentToast('alert', 'Invalid Request');
-      }
+            }
+          },
+            error => {
+              isFailed++;
+              if (arrayPackage.length === i) {
+                this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
+                this.navCtrl.navigateForward('/active-packages');
+              } else { i++; }
+            });
+        } catch (exception) {
+          isFailed++;
+          if (arrayPackage.length === i) {
+            this.loadingController.presentToast('alert', 'Tracked Successfully : ' + isSuccess + ', Failed : ' + isFailed);
+            this.navCtrl.navigateForward(`/active-packages`);
+          } else { i++; }
+        }
+      });
+    } else {
+      this.loadingController.presentToast('alert', 'Invalid Request');
+    }
   }
 
   // Get TNC API
-  TNCapi(trackingNo:string): Observable<any> {
-    let request = {"TrackingNo":trackingNo};
-    return this.http.post(SessionData.apiURL + environment.tncApi , request, {
+  TNCapi(trackingNo: string): Observable<any> {
+    let request = { "TrackingNo": trackingNo };
+    return this.http.post(SessionData.apiURL + environment.tncApi, request, {
       headers: new HttpHeaders()
-      .set('Content-Type', 'application/json')
+        .set('Content-Type', 'application/json')
     });
   }
 
@@ -198,14 +199,14 @@ export class TrackingService {
     const errorData = new ErrorDetails();
     let id = localStorage.getItem("deviceID");
 
-      if (id !== 'null' && id !== null && id !== undefined && id !== '') {
-        errorData.DeviceId = id;
-      } else {
-        errorData.DeviceId = 'NA';
-      }
-      errorData.ErrorMessage = errormsg;
-      errorData.ErrorLocation = errorLoc;
-      this.saveError(errorData).subscribe(data => { }, error => { });
+    if (id !== 'null' && id !== null && id !== undefined && id !== '') {
+      errorData.DeviceId = id;
+    } else {
+      errorData.DeviceId = 'NA';
+    }
+    errorData.ErrorMessage = errormsg;
+    errorData.ErrorLocation = errorLoc;
+    this.saveError(errorData).subscribe(data => { }, error => { });
 
   }
   GenerateDeviceID() {
@@ -220,39 +221,39 @@ export class TrackingService {
   }
   saveToken() {
     let devToken = localStorage.getItem("deviceToken");
-      if (devToken !== 'null' && devToken !== null && devToken !== undefined && devToken !== '') {
-        // alert('DeviceToken = ' + devToken);
-        let devID = localStorage.getItem("deviceID");
+    if (devToken !== 'null' && devToken !== null && devToken !== undefined && devToken !== '') {
+      // alert('DeviceToken = ' + devToken);
+      let devID = localStorage.getItem("deviceID");
 
-          var tempDeviceType = 'IOS';
-          if (this.paltform.is('android')) {
-            var tempDeviceType = 'IONANDROID';
-          }
+      var tempDeviceType = 'IOS';
+      if (this.paltform.is('android')) {
+        var tempDeviceType = 'IONANDROID';
+      }
 
-          if (devID !== 'null' && devID !== null && devID !== undefined && devID !== '') {
-            //  alert('DeviceID' + devID);
-            const gsmDetails = {
-              DeviceId: devID,
-              DeviceType: tempDeviceType,
-              DeviceToken: devToken,
-              RegistrationId: uuid()
-            };
-            this.saveDeviceID(gsmDetails).subscribe(data => {
-              if (data.Error) {
-                this.logError('Error - ' + JSON.stringify(data.Message), 'saveDeviceID');
-              }
-            },
-              error => {
-                this.logError('Error - ' + JSON.stringify(error), 'saveDeviceID');
-              });
-          } else {
-            this.logError('Error - No device ID', 'saveDeviceID');
-            return;
+      if (devID !== 'null' && devID !== null && devID !== undefined && devID !== '') {
+        //  alert('DeviceID' + devID);
+        const gsmDetails = {
+          DeviceId: devID,
+          DeviceType: tempDeviceType,
+          DeviceToken: devToken,
+          RegistrationId: uuid()
+        };
+        this.saveDeviceID(gsmDetails).subscribe(data => {
+          if (data.Error) {
+            this.logError('Error - ' + JSON.stringify(data.Message), 'saveDeviceID');
           }
+        },
+          error => {
+            this.logError('Error - ' + JSON.stringify(error), 'saveDeviceID');
+          });
       } else {
-        this.logError('Error - No device token', 'saveDeviceID');
+        this.logError('Error - No device ID', 'saveDeviceID');
         return;
       }
+    } else {
+      this.logError('Error - No device token', 'saveDeviceID');
+      return;
+    }
   }
   saveError(errorData: ErrorDetails): Observable<any> {
     return this.http.put(SessionData.apiURL + environment.logErrorMessage, errorData, {
@@ -277,22 +278,53 @@ export class TrackingService {
   /// track package
   private trackPackages(_queryParam: QueryParams): Observable<any> {
     try {
-    let trackingAPI = environment.trackingAPI;
-    trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
-    trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
-    trackingAPI = trackingAPI.replace("@Residential", _queryParam.Residential === null || _queryParam.Residential === '' || _queryParam.Residential === undefined ? 'false' : _queryParam.Residential);
-    trackingAPI = trackingAPI.replace("@Description", _queryParam.Description === null || _queryParam.Description === undefined ? '' : _queryParam.Description);
-    trackingAPI = trackingAPI.replace("@DeviceNo", _queryParam.DeviceNo);
-    trackingAPI = trackingAPI.replace("@RegistrationId", uuid());
-    return this.http.post(SessionData.apiURL + trackingAPI, null, {
-      headers: new HttpHeaders()
-        .set('Content-Type', 'application/json')
-    });
+      let trackingAPI = environment.trackingAPI;
+      let SCAC = localStorage.getItem("SCAC");
+      if (SCAC == null || SCAC == 'null' || SCAC == '' || SCAC == undefined) {
+        SCAC = this.GetSCACByCarrier(_queryParam.Carrier);
+      }
+      if (_queryParam.Carrier === "C" || _queryParam.Carrier === "L") {
+        _queryParam.Carrier = "X";
+      }
+
+      trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
+      trackingAPI = trackingAPI.replace("@SCAC", SCAC);
+      trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
+      trackingAPI = trackingAPI.replace("@Residential", _queryParam.Residential === null || _queryParam.Residential === '' || _queryParam.Residential === undefined ? 'false' : _queryParam.Residential);
+      trackingAPI = trackingAPI.replace("@Description", _queryParam.Description === null || _queryParam.Description === undefined ? '' : _queryParam.Description);
+      trackingAPI = trackingAPI.replace("@DeviceNo", _queryParam.DeviceNo);
+      trackingAPI = trackingAPI.replace("@RegistrationId", uuid());
+      return this.http.post(SessionData.apiURL + trackingAPI, null, {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+      });
+    }
+    catch (exc) {
+      this.loadingController.presentToast('dark', 'Error: ' + exc);
+      return null;
+    }
   }
-  catch (exc) {
-    this.loadingController.presentToast('dark', 'Error: ' + exc);
-    return null;
-  }
+  GetSCACByCarrier(Carrier: string): string {
+    switch (Carrier) {
+      case "C":
+        return "CNPR";
+      case "L":
+        return "LSOM";
+      case "U":
+        return "UPSN";
+      case "S":
+        return "USPS";
+      case "F":
+        return "FDE";
+      case "D":
+        return "DHL";
+      case "P":
+        return "PLTR";
+      case "O":
+        return "ONTR";
+      default:
+        return "";
+    }
   }
   /// set active package data in sessions
   setPackagestoSession(tData: any) {

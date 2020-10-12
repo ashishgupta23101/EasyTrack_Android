@@ -3077,6 +3077,7 @@ var TrackingService = /** @class */ (function () {
                     if (tData == null) {
                         tData = [];
                     }
+                    localStorage.setItem("SCAC", "");
                     // tslint:disable-next-line: max-line-length
                     var index = tData.findIndex(function (item) { return item.trackingNo === queryParam.TrackingNo.trim() + '-' + queryParam.Carrier.trim(); });
                     if (index >= 0) {
@@ -3291,7 +3292,15 @@ var TrackingService = /** @class */ (function () {
     TrackingService.prototype.trackPackages = function (_queryParam) {
         try {
             var trackingAPI = src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].trackingAPI;
+            var SCAC = localStorage.getItem("SCAC");
+            if (SCAC == null || SCAC == 'null' || SCAC == '' || SCAC == undefined) {
+                SCAC = this.GetSCACByCarrier(_queryParam.Carrier);
+            }
+            if (_queryParam.Carrier === "C" || _queryParam.Carrier === "L") {
+                _queryParam.Carrier = "X";
+            }
             trackingAPI = trackingAPI.replace("@TrackingNo", _queryParam.TrackingNo);
+            trackingAPI = trackingAPI.replace("@SCAC", SCAC);
             trackingAPI = trackingAPI.replace("@Carrier", _queryParam.Carrier);
             trackingAPI = trackingAPI.replace("@Residential", _queryParam.Residential === null || _queryParam.Residential === '' || _queryParam.Residential === undefined ? 'false' : _queryParam.Residential);
             trackingAPI = trackingAPI.replace("@Description", _queryParam.Description === null || _queryParam.Description === undefined ? '' : _queryParam.Description);
@@ -3305,6 +3314,28 @@ var TrackingService = /** @class */ (function () {
         catch (exc) {
             this.loadingController.presentToast('dark', 'Error: ' + exc);
             return null;
+        }
+    };
+    TrackingService.prototype.GetSCACByCarrier = function (Carrier) {
+        switch (Carrier) {
+            case "C":
+                return "CNPR";
+            case "L":
+                return "LSOM";
+            case "U":
+                return "UPSN";
+            case "S":
+                return "USPS";
+            case "F":
+                return "FDE";
+            case "D":
+                return "DHL";
+            case "P":
+                return "PLTR";
+            case "O":
+                return "ONTR";
+            default:
+                return "";
         }
     };
     /// set active package data in sessions

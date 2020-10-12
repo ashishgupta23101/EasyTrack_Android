@@ -41,6 +41,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   queryParam: QueryParams;
   encodeData: any;
   carrierCode: any = '';
+  SCAC: any = '';
   scannedData: {};
   isCarrier = true;
   barcodeScannerOptions: BarcodeScannerOptions;
@@ -111,6 +112,47 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
         this.loadingController.presentToast('Error', 'Something went wrong');
       });
   }
+
+  // scanPGCode1() {
+  //   this.trackingMode = TrackingMode.Scanned;
+  //   this.subComponentOpened = true;
+  //   this.qrScanner.useBackCamera();
+  //   // Optionally request the permission early
+  //   this.qrScanner.prepare()
+  //     .then((status: QRScannerStatus) => {
+  //       if (status.authorized) {
+  //         // camera permission was granted
+
+
+  //         // start scanning
+  //         let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+  //           if (text != null) {
+  //             this.trackNo = text.replace('\u001d', '');
+  //             this.GetCarrierByTNC(this.trackNo, TrackingMode.Scanned, true);
+
+  //             this.qrScanner.hide(); // hide camera preview
+  //             scanSub.unsubscribe(); // stop scanning
+  //           }
+  //           else {
+  //             this.loadingController.presentToast('Warning', 'No Data Available');
+  //             this.subComponentOpened = false;
+  //           }
+  //         });
+
+  //       } else if (status.denied) {
+  //         // camera permission was permanently denied
+  //         // you must use QRScanner.openSettings() method to guide the user to the settings page
+  //         // then they can grant the permission from there
+  //       } else {
+  //         // permission was denied, but not permanently. You can ask for permission again at a later time.
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       this.clearTrack();
+  //       this.trackService.logError(JSON.stringify(error), 'barcode Scan issue');
+  //       this.loadingController.presentToast('Error', 'Something went wrong');
+  //     });
+  // }
 
   CorrectTrackingNo(trackNo: string) {
     if ((trackNo.length > 20) && trackNo.substring(0, 3) == '420') {
@@ -252,12 +294,21 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
               TrackingNo: new FormControl(TrackingNo)
             });
             this.carrierCode = data.ResponseData.Carrier;
+            try {
+              this.SCAC = data.ResponseData.SCAC;
+            }
+            catch (err) {
+              this.SCAC = "";
+              this.trackService.logError(JSON.stringify(err), 'fillCarrierCode');
+            }
+            localStorage.setItem("SCAC", this.SCAC);
             if (mode != TrackingMode.Shared) {
               this.loadingController.dismiss();
               this.subComponentOpened = false;
             }
 
             if (this.carrierCode === null || this.carrierCode === 'null' || this.carrierCode === '' || this.carrierCode === undefined) {
+              localStorage.setItem("SCAC", '');
               this.carrierSelectRef.open();
             }
             else {
@@ -266,6 +317,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
               } else {
                 localStorage.setItem("isScanned", 'false');
               }
+
               this.doTrack(data.ResponseData.TrackingNo, this.carrierCode);
             }
 
@@ -316,6 +368,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   }
   clearTrack() {
     this.carrierCode = '';
+    localStorage.setItem("SCAC", '');
     this.track_Form = this.formBuilder.group({
       TrackingNo: new FormControl('')
     });

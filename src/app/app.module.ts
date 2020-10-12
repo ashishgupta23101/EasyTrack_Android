@@ -45,9 +45,9 @@ const config = {
   messagingSenderId: "874399430634"
 };
 
-export class ZendeskConfig extends ngxZendeskWebwidgetConfig{
+export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
   accountUrl = 'shipmatrix.zendesk.com';
-  beforePageLoad(zE){
+  beforePageLoad(zE) {
     zE.setLocale('en');
     zE.hide();
   }
@@ -65,9 +65,9 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig{
     AngularFirestoreModule,
     AppRoutingModule, SharedModule, IonicStorageModule.forRoot({
       name: '__mydb',
-driverOrder: ['indexeddb', 'sqlite', 'websql']
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
     })
-  ],  providers: [AppConfigService, LoaderService, BarcodeScanner, SocialSharing, Device, StatusBar,
+  ], providers: [AppConfigService, LoaderService, BarcodeScanner, SocialSharing, Device, StatusBar,
     SplashScreen,
     NativeGeocoder,
     FirebaseX,
@@ -81,4 +81,4 @@ driverOrder: ['indexeddb', 'sqlite', 'websql']
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
