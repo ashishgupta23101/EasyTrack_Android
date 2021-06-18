@@ -31,7 +31,7 @@
 
     <ion-button class="submit-btn" color="tertiary" type="submit" style="height: 38px;" expand="block"
       [disabled]="!track_Form.valid">Track</ion-button>
-    <ion-select [hidden]="isCarrier" #carrierList okText="Okay" (ionChange)="doTrack(track_Form.value)"
+    <ion-select [hidden]="isCarrier" #carrierList okText="Okay" class="customClassForSelect" style="max-height: inherit;" (ionChange)="doTrack(track_Form.value)"
       cancelText="Dismiss">
       <ion-select-option value="U">UPS</ion-select-option>
       <ion-select-option value="S">USPS</ion-select-option>

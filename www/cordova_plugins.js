@@ -1,6 +1,14 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
   module.exports = [
     {
+      "id": "cc.fovea.cordova.openwith.openwith",
+      "file": "plugins/cc.fovea.cordova.openwith/www/openwith.js",
+      "pluginId": "cc.fovea.cordova.openwith",
+      "clobbers": [
+        "cordova.openwith"
+      ]
+    },
+    {
       "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
       "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
       "pluginId": "com-darryncampbell-cordova-plugin-intent",
@@ -17,6 +25,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "com.napolitano.cordova.plugin.intent.IntentPlugin",
+      "file": "plugins/com.napolitano.cordova.plugin.intent/www/android/IntentPlugin.js",
+      "pluginId": "com.napolitano.cordova.plugin.intent",
+      "clobbers": [
+        "IntentPlugin"
+      ]
+    },
+    {
       "id": "cordova-plugin-cszbar.zBar",
       "file": "plugins/cordova-plugin-cszbar/www/zbar.js",
       "pluginId": "cordova-plugin-cszbar",
@@ -30,6 +46,22 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "pluginId": "cordova-plugin-device",
       "clobbers": [
         "device"
+      ]
+    },
+    {
+      "id": "cordova-plugin-fcm-with-dependecy-updated.FCMPlugin",
+      "file": "plugins/cordova-plugin-fcm-with-dependecy-updated/www/FCMPlugin.js",
+      "pluginId": "cordova-plugin-fcm-with-dependecy-updated",
+      "clobbers": [
+        "FCM"
+      ]
+    },
+    {
+      "id": "cordova-plugin-firebasex.FirebasePlugin",
+      "file": "plugins/cordova-plugin-firebasex/www/firebase.js",
+      "pluginId": "cordova-plugin-firebasex",
+      "clobbers": [
+        "FirebasePlugin"
       ]
     },
     {
@@ -97,6 +129,28 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "cordova-plugin-qrscanner.QRScanner",
+      "file": "plugins/cordova-plugin-qrscanner/www/www.min.js",
+      "pluginId": "cordova-plugin-qrscanner",
+      "clobbers": [
+        "QRScanner"
+      ]
+    },
+    {
+      "id": "es6-promise-plugin.Promise",
+      "file": "plugins/es6-promise-plugin/www/promise.js",
+      "pluginId": "es6-promise-plugin",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-screen-orientation.screenorientation",
+      "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+      "pluginId": "cordova-plugin-screen-orientation",
+      "clobbers": [
+        "cordova.plugins.screenorientation"
+      ]
+    },
+    {
       "id": "cordova-plugin-splashscreen.SplashScreen",
       "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
       "pluginId": "cordova-plugin-splashscreen",
@@ -111,12 +165,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.StatusBar"
       ]
-    },
-    {
-      "id": "es6-promise-plugin.Promise",
-      "file": "plugins/es6-promise-plugin/www/promise.js",
-      "pluginId": "es6-promise-plugin",
-      "runs": true
     },
     {
       "id": "cordova-plugin-x-socialsharing.SocialSharing",
@@ -141,54 +189,20 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "cordova.plugins.barcodeScanner"
       ]
-    },
-    {
-      "id": "com.napolitano.cordova.plugin.intent.IntentPlugin",
-      "file": "plugins/com.napolitano.cordova.plugin.intent/www/android/IntentPlugin.js",
-      "pluginId": "com.napolitano.cordova.plugin.intent",
-      "clobbers": [
-        "IntentPlugin"
-      ]
-    },
-    {
-      "id": "cc.fovea.cordova.openwith.openwith",
-      "file": "plugins/cc.fovea.cordova.openwith/www/openwith.js",
-      "pluginId": "cc.fovea.cordova.openwith",
-      "clobbers": [
-        "cordova.openwith"
-      ]
-    },
-    {
-      "id": "cordova-plugin-firebasex.FirebasePlugin",
-      "file": "plugins/cordova-plugin-firebasex/www/firebase.js",
-      "pluginId": "cordova-plugin-firebasex",
-      "clobbers": [
-        "FirebasePlugin"
-      ]
-    },
-    {
-      "id": "cordova-plugin-fcm-with-dependecy-updated.FCMPlugin",
-      "file": "plugins/cordova-plugin-fcm-with-dependecy-updated/www/FCMPlugin.js",
-      "pluginId": "cordova-plugin-fcm-with-dependecy-updated",
-      "clobbers": [
-        "FCM"
-      ]
-    },
-    {
-      "id": "cordova-plugin-screen-orientation.screenorientation",
-      "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
-      "pluginId": "cordova-plugin-screen-orientation",
-      "clobbers": [
-        "cordova.plugins.screenorientation"
-      ]
     }
   ];
   module.exports.metadata = {
+    "cc.fovea.cordova.openwith": "2.0.0",
     "com-darryncampbell-cordova-plugin-intent": "2.0.0",
     "com.borismus.webintent": "1.0.0",
+    "com.napolitano.cordova.plugin.intent": "0.1.3",
     "cordova-android-support-gradle-release": "3.0.1",
+    "cordova-plugin-androidx": "1.0.2",
+    "cordova-plugin-androidx-adapter": "1.1.1",
     "cordova-plugin-cszbar": "1.3.2",
     "cordova-plugin-device": "2.0.3",
+    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
+    "cordova-plugin-firebasex": "9.0.1-cli",
     "cordova-plugin-geolocation": "4.0.2",
     "cordova-plugin-inappbrowser": "3.1.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
@@ -196,21 +210,16 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-nativegeocoder": "3.2.2",
     "cordova-plugin-network-information": "2.0.2",
     "cordova-plugin-openwith-ios": "1.0.0",
+    "cordova-plugin-qrscanner": "3.0.1",
+    "es6-promise-plugin": "4.2.2",
+    "cordova-plugin-screen-orientation": "3.0.2",
     "cordova-plugin-splashscreen": "5.0.3",
     "cordova-plugin-statusbar": "2.4.3",
     "cordova-plugin-whitelist": "1.3.4",
-    "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "5.4.7",
     "cordova-sqlite-storage": "3.2.0",
     "cordova-support-android-plugin": "1.0.2",
     "cordova-support-google-services": "1.4.0",
-    "phonegap-plugin-barcodescanner": "8.0.1",
-    "com.napolitano.cordova.plugin.intent": "0.1.3",
-    "cc.fovea.cordova.openwith": "2.0.0",
-    "cordova-plugin-androidx": "1.0.2",
-    "cordova-plugin-androidx-adapter": "1.1.1",
-    "cordova-plugin-firebasex": "9.0.1-cli",
-    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
-    "cordova-plugin-screen-orientation": "3.0.2"
+    "phonegap-plugin-barcodescanner": "8.0.1"
   };
 });
